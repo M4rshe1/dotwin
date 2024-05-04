@@ -172,6 +172,47 @@ function ff($name) {
     }
 }
 
+function find {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $SearchString
+    )
+
+    # Get all files recursively from the current directory
+    $files = Get-ChildItem -Path $PWD -Recurse -File
+
+    # Array to store results
+    $results = @()
+
+    foreach ($file in $files) {
+        try {
+            # Read the content of the file
+            $content = Get-Content -Path $file.FullName -Raw -ErrorAction Stop
+
+            # Split content into lines
+            $lines = $content -split "`r`n"  # Split by newline (handles Windows format)
+
+            # Iterate through each line to find the search string
+            for ($i = 0; $i -lt $lines.Count; $i++) {
+                if ($lines[$i] -match $SearchString) {
+                    # Build the result string: "file_path:line_number"
+                    $result = "{0}:{1}" -f $file.FullName, ($i + 1)  # Line numbers are 1-based
+                    $results += $result
+                }
+            }
+        }
+        catch {
+            Write-Warning "Error reading file: $($file.FullName)"
+        }
+    }
+
+    # Output the results
+    $results
+}
+
+
 if (Get-Command zoxide -ErrorAction SilentlyContinue) {
     Invoke-Expression (& { (zoxide init powershell | Out-String) })
 } else {
