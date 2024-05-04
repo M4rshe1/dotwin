@@ -78,9 +78,15 @@ function cb
         [string]$path = "",
         [string]$rm,
         [Switch]$ls,
-        [String]$token = "wefwefwefwefthedrthrthertheewr34345345345rtherth",
+        [String]$token = [Environment]::GetEnvironmentVariable("CB_TOKEN", "User"),
         [String]$serverURI = "https://bin.heggli.dev"
     )
+
+    if ($token -eq "") {
+        $token = Read-Host "Please provide a token`n>> "
+        [Environment]::SetEnvironmentVariable("CB_TOKEN", $token, "User")
+    }
+
     if ($rm) {
         if ($rm -eq "") {
             Write-Host "No fileid provided" -ForegroundColor Red
