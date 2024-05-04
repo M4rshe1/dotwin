@@ -172,7 +172,7 @@ function ff($name) {
     }
 }
 
-function find {
+function fif {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory = $true)]
