@@ -23,14 +23,21 @@ if (-not $noInstall)
     winget install glazewm
 }
 
+
 if (-not $noConfig)
 {
     Write-Host "Add config files..."
-    Invoke-RestMethod "https://raw.githubusercontent.com/M4rshe1/dotwin/master/powershell/Microsoft.PowerShell_profile.ps1" | Out-File $PROFILE
-    Invoke-RestMethod "https://raw.githubusercontent.com/M4rshe1/dotwin/master/shell/shell.nss" | Out-File "C:\Program Files\Nilesoft Shell\shell.nss" $env:LOCALAPPDATA
-    Invoke-RestMethod "https://raw.githubusercontent.com/M4rshe1/dotwin/master/glazewm/config.yml" | Out-File "~\.glaze-wm\config.yml"
-    Invoke-RestMethod "https://raw.githubusercontent.com/M4rshe1/dotwin/master/terminal/settings.json" | Out-File "$env:LOCALAPPDATA\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"
+    if (-not (Test-Path $PROFILE))
+    {
+        New-Item -ItemType File -Path $PROFILE -Force
+    }
+    Invoke-RestMethod "https://raw.githubusercontent.com/M4rshe1/dotwin/master/powershell/Microsoft.PowerShell_profile.ps1" | Out-File $PROFILE -Force
+    Invoke-RestMethod "https://raw.githubusercontent.com/M4rshe1/dotwin/master/shell/shell.nss" | Out-File "C:\Program Files\Nilesoft Shell\shell.nss" $env:LOCALAPPDATA -Force
+    Invoke-RestMethod "https://raw.githubusercontent.com/M4rshe1/dotwin/master/glazewm/config.yml" | Out-File "~\.glaze-wm\config.yml" -Force
+    Invoke-RestMethod "https://raw.githubusercontent.com/M4rshe1/dotwin/master/terminal/settings.json" | Out-File "$env:LOCALAPPDATA\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json" -Force
 }
+
+
 
 function Add-StartUpShortcut($name, $path)
 {

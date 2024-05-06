@@ -1,6 +1,12 @@
-$canConnectToGitHub = Test-Connection github.com -Count 1 -Quiet -TimeoutSeconds 1
-
-
+try {
+    $request = [System.Net.HttpWebRequest]::Create("http://github.com")
+    $request.Timeout = 500
+    $response = $request.GetResponse()
+    $response.Close()
+    $canConnectToGitHub = $true
+} catch {
+    $canConnectToGitHub = $false
+}
 
 if (-not(Get-Module -Name PSReadLine -ListAvailable)) {
     Write-Host "PSReadLine module not found. Attempting to install via PowerShellGet..."
@@ -48,12 +54,23 @@ Set-PSReadLineOption -PredictionSource History
 Set-PSReadLineOption -PredictionViewStyle ListView
 
 function e {
-    explorer .
+    param(
+        [string]$path = "."
+    )
+    explorer $path
 }
 
 function c {
     [string]$path = $PWD
-    pycharm $path
+    if (Get-Command pycharm -ErrorAction SilentlyContinue) {
+        pycharm $path
+        return
+    } elseif (Get-Command code -ErrorAction SilentlyContinue) {
+        code $path
+        return
+    } else {
+        notepad $path
+    }
 }
 
 function ctt {
@@ -65,11 +82,9 @@ function Get-PubIP { (Invoke-WebRequest http://ifconfig.me/ip).Content }
 
 # System Utilities
 function uptime {
-    if ($PSVersionTable.PSVersion.Major -eq 5) {
-        Get-WmiObject win32_operatingsystem | Select-Object @{Name='LastBootUpTime'; Expression={$_.ConverttoDateTime($_.lastbootuptime)}} | Format-Table -HideTableHeaders
-    } else {
-        net statistics workstation | Select-String "since" | ForEach-Object { $_.ToString().Replace('Statistics since ', '') }
-    }
+    $uptime = Get-WmiObject -Class Win32_OperatingSystem | Select-Object -ExpandProperty LastBootUpTime | ForEach-Object { [Management.ManagementDateTimeConverter]::ToDateTime($_) }
+    $uptime = New-TimeSpan -Start $uptime -End (Get-Date) | Select-Object -Property Days, Hours, Minutes, Seconds
+    "$( $uptime.Days ) days, $( $uptime.Hours ) hours, $( $uptime.Minutes ) minutes, $( $uptime.Seconds ) seconds"
 }
 
 function cb
@@ -126,6 +141,18 @@ function cb
     Invoke-RestMethod -Uri $serverURI -Method Get -Body $body
 }
 
+function sha256 {
+    param(
+        [string]$path = ""
+    )
+    if (-not (Test-Path $path)) {
+        Write-Host "File not found" -ForegroundColor Red
+        return
+    }
+    $hash = Get-FileHash $path -Algorithm SHA256
+    Write-Host $hash.Hash
+}
+
 function grep($regex, $dir) {
     if ( $dir ) {
         Get-ChildItem $dir | select-string $regex
@@ -147,7 +174,7 @@ function which($name) {
 }
 
 function export($name, $value) {
-    set-item -force -path "env:$name" -value $value;
+    [Environment]::SetEnvironmentVariable($name, $value, "User")
 }
 
 function pkill($name) {
@@ -155,7 +182,7 @@ function pkill($name) {
 }
 
 function pgrep($name) {
-    Get-Process $name
+    Get-Process | Where-Object { $_.ProcessName -match $name }
 }
 
 function head {
