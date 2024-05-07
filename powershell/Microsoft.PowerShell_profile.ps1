@@ -210,11 +210,12 @@ function fif {
     param (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [string] $SearchString
+        [string] $SearchString,
+        [string] $path = $PWD
     )
 
     # Get all files recursively from the current directory
-    $files = Get-ChildItem -Path $PWD -Recurse -File
+    $files = Get-ChildItem -Path $path -Recurse -File
 
     # Array to store results
     $results = @()
