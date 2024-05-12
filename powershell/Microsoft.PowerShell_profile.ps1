@@ -165,6 +165,24 @@ function df {
     get-volume
 }
 
+function unzip() {
+    param (
+        [string] $file = $(throw "Please provide a file to unzip"),
+        [string] $dest = "."
+    )
+
+    Expand-Archive -Path $file -DestinationPath $dest
+}
+
+function zip() {
+    param (
+        [string] $file = $(throw "Please provide a file to zip"),
+        [string] $dest = "."
+    )
+
+    Compress-Archive -Path $file -DestinationPath $dest
+}
+
 function sed($file, $find, $replace) {
     (Get-Content $file).replace("$find", $replace) | Set-Content $file
 }
@@ -197,6 +215,11 @@ function tail {
 
 function la { Get-ChildItem -Path . -Force | Format-Table -AutoSize }
 function ll { Get-ChildItem -Path . -Force -Hidden | Format-Table -AutoSize }
+
+function mkcd($name) {
+    mkdir $name
+    cd $name
+}
 
 function touch($file) { "" | Out-File $file -Encoding ASCII }
 function ff($name) {
