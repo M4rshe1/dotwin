@@ -1,49 +1,67 @@
-try {
+try
+{
     $request = [System.Net.HttpWebRequest]::Create("http://github.com")
     $request.Timeout = 500
     $response = $request.GetResponse()
     $response.Close()
     $canConnectToGitHub = $true
-} catch {
+}
+catch
+{
     $canConnectToGitHub = $false
 }
 
-if (-not(Get-Module -Name PSReadLine -ListAvailable)) {
+if (-not (Get-Module -Name PSReadLine -ListAvailable))
+{
     Write-Host "PSReadLine module not found. Attempting to install via PowerShellGet..."
-    try {
+    try
+    {
         Install-Module -Name PSReadLine -AllowClobber -Force
         Write-Host "PSReadLine installed successfully. Importing..."
         Import-Module PSReadLine
-    } catch {
+    }
+    catch
+    {
         Write-Error "Failed to install PSReadLine. Error: $_"
     }
-} else {
+}
+else
+{
     Import-Module PSReadLine
 }
 
-if (-not (Get-Module -ListAvailable -Name Terminal-Icons)) {
+if (-not (Get-Module -ListAvailable -Name Terminal-Icons))
+{
     Install-Module -Name Terminal-Icons -Scope CurrentUser -Force -SkipPublisherCheck
 }
 Import-Module -Name Terminal-Icons
 
-function Update-Profile {
-    if (-not $global:canConnectToGitHub) {
+function Update-Profile
+{
+    if (-not $global:canConnectToGitHub)
+    {
         Write-Host "Skipping profile update check due to GitHub.com not responding within 1 second." -ForegroundColor Yellow
         return
     }
 
-    try {
+    try
+    {
         $url = "https://raw.githubusercontent.com/M4rshe1/pwsh/master/powershell/Microsoft.PowerShell_profile.ps1"
         $oldhash = Get-FileHash $PROFILE
         Invoke-RestMethod $url -OutFile "$env:temp/Microsoft.PowerShell_profile.ps1"
         $newhash = Get-FileHash "$env:temp/Microsoft.PowerShell_profile.ps1"
-        if ($newhash.Hash -ne $oldhash.Hash) {
+        if ($newhash.Hash -ne $oldhash.Hash)
+        {
             Copy-Item -Path "$env:temp/Microsoft.PowerShell_profile.ps1" -Destination $PROFILE -Force
             Write-Host "Profile has been updated. Please restart your shell to reflect changes" -ForegroundColor Magenta
         }
-    } catch {
+    }
+    catch
+    {
         Write-Error "Unable to check for `$profile updates"
-    } finally {
+    }
+    finally
+    {
         Remove-Item "$env:temp/Microsoft.PowerShell_profile.ps1" -ErrorAction SilentlyContinue
     }
 }
@@ -53,35 +71,47 @@ Update-Profile
 Set-PSReadLineOption -PredictionSource History
 Set-PSReadLineOption -PredictionViewStyle ListView
 
-function e {
+function e
+{
     param(
         [string]$path = "."
     )
     explorer $path
 }
 
-function c {
+function c
+{
     [string]$path = $PWD
-    if (Get-Command pycharm -ErrorAction SilentlyContinue) {
+    if (Get-Command pycharm -ErrorAction SilentlyContinue)
+    {
         pycharm $path
         return
-    } elseif (Get-Command code -ErrorAction SilentlyContinue) {
+    }
+    elseif (Get-Command code -ErrorAction SilentlyContinue)
+    {
         code $path
         return
-    } else {
+    }
+    else
+    {
         notepad $path
     }
 }
 
-function ctt {
+function ctt
+{
     irm christitus.com/win | iex
 }
 
 # Network Utilities
-function Get-PubIP { (Invoke-WebRequest http://ifconfig.me/ip).Content }
+function Get-PubIP
+{
+    (Invoke-WebRequest http://ifconfig.me/ip).Content
+}
 
 # System Utilities
-function uptime {
+function uptime
+{
     $uptime = Get-WmiObject -Class Win32_OperatingSystem | Select-Object -ExpandProperty LastBootUpTime | ForEach-Object { [Management.ManagementDateTimeConverter]::ToDateTime($_) }
     $uptime = New-TimeSpan -Start $uptime -End (Get-Date) | Select-Object -Property Days, Hours, Minutes, Seconds
     "$( $uptime.Days ) days, $( $uptime.Hours ) hours, $( $uptime.Minutes ) minutes, $( $uptime.Seconds ) seconds"
@@ -97,13 +127,16 @@ function cb
         [String]$serverURI = "https://bin.heggli.dev"
     )
 
-    if ($token -eq "") {
+    if ($token -eq "")
+    {
         $token = Read-Host "Please provide a token`n>> "
         [Environment]::SetEnvironmentVariable("CB_TOKEN", $token, "User")
     }
 
-    if ($rm) {
-        if ($rm -eq "") {
+    if ($rm)
+    {
+        if ($rm -eq "")
+        {
             Write-Host "No fileid provided" -ForegroundColor Red
             return
         }
@@ -114,21 +147,24 @@ function cb
         $body = @{
             token = $token
         }
-        Invoke-RestMethod -Uri "$($serverURI)/$($rm)?token=$($token)" -Method Delete -Body $body -Headers $headers
+        Invoke-RestMethod -Uri "$( $serverURI )/$( $rm )?token=$( $token )" -Method Delete -Body $body -Headers $headers
         return
     }
-    if ($ls) {
+    if ($ls)
+    {
         $body = @{
             token = $token
         }
-        Invoke-RestMethod -Uri "$($serverURI)/ls" -Method Get -Body $body
+        Invoke-RestMethod -Uri "$( $serverURI )/ls" -Method Get -Body $body
         return
     }
-    if ($path -eq "") {
+    if ($path -eq "")
+    {
         Write-Host "No path provided" -ForegroundColor Red
         return
     }
-    if (-not (Test-Path $path)) {
+    if (-not (Test-Path $path))
+    {
         Write-Host "File not found" -ForegroundColor Red
         return
     }
@@ -141,11 +177,13 @@ function cb
     Invoke-RestMethod -Uri $serverURI -Method Get -Body $body
 }
 
-function sha256 {
+function sha256
+{
     param(
         [string]$path = ""
     )
-    if (-not (Test-Path $path)) {
+    if (-not (Test-Path $path))
+    {
         Write-Host "File not found" -ForegroundColor Red
         return
     }
@@ -153,82 +191,116 @@ function sha256 {
     Write-Host $hash.Hash
 }
 
-function grep($regex, $dir) {
-    if ( $dir ) {
+function grep($regex, $dir)
+{
+    if ($dir)
+    {
         Get-ChildItem $dir | select-string $regex
         return
     }
     $input | select-string $regex
 }
 
-function df {
+function df
+{
     get-volume
 }
 
-function unzip() {
+function unzip()
+{
     param (
-        [string] $file = $(throw "Please provide a file to unzip"),
+        [string] $file = $( throw "Please provide a file to unzip" ),
         [string] $dest = "."
     )
 
     Expand-Archive -Path $file -DestinationPath $dest
 }
 
-function zip() {
+function zip()
+{
     param (
-        [string] $file = $(throw "Please provide a file to zip"),
+        [string] $file = $( throw "Please provide a file to zip" ),
         [string] $dest = "."
     )
 
     Compress-Archive -Path $file -DestinationPath $dest
 }
 
-function sed($file, $find, $replace) {
+function sed($file, $find, $replace)
+{
     (Get-Content $file).replace("$find", $replace) | Set-Content $file
 }
 
-function which($name) {
+function which($name)
+{
     Get-Command $name | Select-Object -ExpandProperty Definition
 }
 
-function export($name, $value) {
+function export($name, $value)
+{
     [Environment]::SetEnvironmentVariable($name, $value, "User")
 }
 
-function pkill($name) {
+function pkill($name)
+{
     Get-Process $name -ErrorAction SilentlyContinue | Stop-Process
 }
 
-function pgrep($name) {
+function pgrep($name)
+{
     Get-Process | Where-Object { $_.ProcessName -match $name }
 }
 
-function head {
+function head
+{
     param($Path, $n = 10)
     Get-Content $Path -Head $n
 }
 
-function tail {
+function tail
+{
     param($Path, $n = 10)
     Get-Content $Path -Tail $n
 }
 
-function la { Get-ChildItem -Path . -Force | Format-Table -AutoSize }
-function ll { Get-ChildItem -Path . -Force -Hidden | Format-Table -AutoSize }
+function la
+{
+    Get-ChildItem -Path . -Force | Format-Table -AutoSize
+}
+function ll
+{
+    Get-ChildItem -Path . -Force -Hidden | Format-Table -AutoSize
+}
 
-function mkcd($name) {
+function mkcd($name)
+{
     mkdir $name
     cd $name
 }
 
-function touch($file) { "" | Out-File $file -Encoding ASCII }
-function ff($name) {
-    Get-ChildItem -recurse -filter "*${name}*" -ErrorAction SilentlyContinue | ForEach-Object {
-        Write-Output "$($_.directory)\$($_)"
+function rmrf($path)
+{
+    $confirm = Read-Host "Are you sure you want to delete $path? (y/n)"
+    if ($confirm -eq "y")
+    {
+        Remove-Item $path -Recurse -Force
     }
 }
 
-function fif {
+
+function touch($file)
+{
+    "" | Out-File $file -Encoding ASCII
+}
+function ff($name)
+{
+    Get-ChildItem -recurse -filter "*${name}*" -ErrorAction SilentlyContinue | ForEach-Object {
+        Write-Output "$( $_.directory )\$( $_ )"
+    }
+}
+
+function fif
+{
     [CmdletBinding()]
     param (
         [Parameter(Mandatory = $true)]
@@ -243,8 +315,10 @@ function fif {
     # Array to store results
     $results = @()
 
-    foreach ($file in $files) {
-        try {
+    foreach ($file in $files)
+    {
+        try
+        {
             # Read the content of the file
             $content = Get-Content -Path $file.FullName -Raw -ErrorAction Stop
 
@@ -253,15 +327,17 @@ function fif {
 
             # Iterate through each line to find the search string
             for ($i = 0; $i -lt $lines.Count; $i++) {
-                if ($lines[$i] -match $SearchString) {
+                if ($lines[$i] -match $SearchString)
+                {
                     # Build the result string: "file_path:line_number"
                     $result = "{0}:{1}" -f $file.FullName, ($i + 1)  # Line numbers are 1-based
                     $results += $result
                 }
             }
         }
-        catch {
-            Write-Warning "Error reading file: $($file.FullName)"
+        catch
+        {
+            Write-Warning "Error reading file: $( $file.FullName )"
         }
     }
 
@@ -270,15 +346,21 @@ function fif {
 }
 
 
-if (Get-Command zoxide -ErrorAction SilentlyContinue) {
+if (Get-Command zoxide -ErrorAction SilentlyContinue)
+{
     Invoke-Expression (& { (zoxide init powershell | Out-String) })
-} else {
+}
+else
+{
     Write-Host "zoxide command not found. Attempting to install via winget..."
-    try {
+    try
+    {
         winget install -e --id ajeetdsouza.zoxide
         Write-Host "zoxide installed successfully. Initializing..."
         Invoke-Expression (& { (zoxide init powershell | Out-String) })
-    } catch {
+    }
+    catch
+    {
         Write-Error "Failed to install zoxide. Error: $_"
     }
 }
