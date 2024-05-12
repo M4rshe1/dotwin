@@ -79,17 +79,39 @@ function e
     explorer $path
 }
 
+function cdn {
+    param (
+        [string]$path = "."
+    )
+    Set-Location -Path $path
+    nvim .
+}
+
 function c
 {
     [string]$path = $PWD
+
+    if (Test-Path $path -PathType Leaf)
+    {
+        $path = $path | Split-Path
+    }
+
     if (Get-Command pycharm -ErrorAction SilentlyContinue)
     {
-        pycharm $path
+        cd $path
+        pycharm .
         return
     }
     elseif (Get-Command code -ErrorAction SilentlyContinue)
     {
-        code $path
+        cd $path
+        code .
+        return
+    }
+    elseif (Get-Command nvim -ErrorAction SilentlyContinue)
+    {
+        cd $path
+        nvim .
         return
     }
     else
