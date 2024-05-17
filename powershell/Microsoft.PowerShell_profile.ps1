@@ -79,7 +79,8 @@ function e
     explorer $path
 }
 
-function cdn {
+function cdn
+{
     param (
         [string]$path = "."
     )
@@ -365,6 +366,20 @@ function fif
 
     # Output the results
     $results
+}
+
+function cbcp
+{
+    param (
+    [Parameter(ValueFromPipeline = $true, Mandatory = $true)]
+    [string] $content
+    )
+    Set-Clipboard -Value $content
+}
+
+function cbpt
+{
+    Get-Clipboard
 }
 
 
