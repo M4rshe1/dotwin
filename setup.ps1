@@ -31,9 +31,12 @@ if (-not $noConfig)
     {
         New-Item -ItemType File -Path $PROFILE -Force
     }
+    # go to the home directory
+    Set-Location ~
+
     Invoke-RestMethod "https://raw.githubusercontent.com/M4rshe1/dotwin/master/powershell/Microsoft.PowerShell_profile.ps1" | Out-File $PROFILE -Force
     Invoke-RestMethod "https://raw.githubusercontent.com/M4rshe1/dotwin/master/shell/shell.nss" | Out-File "C:\Program Files\Nilesoft Shell\shell.nss" $env:LOCALAPPDATA -Force
-    Invoke-RestMethod "https://raw.githubusercontent.com/M4rshe1/dotwin/master/glazewm/config.yml" | Out-File "~\.glaze-wm\config.yml" -Force
+    Invoke-RestMethod "https://raw.githubusercontent.com/M4rshe1/dotwin/master/glazewm/config.yml" | Out-File ".glaze-wm\config.yml" -Force
     Invoke-RestMethod "https://raw.githubusercontent.com/M4rshe1/dotwin/master/terminal/settings.json" | Out-File "$env:LOCALAPPDATA\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json" -Force
 }
 
@@ -51,7 +54,7 @@ function Add-StartUpShortcut($name, $path)
 function Get-WinGetProgramPath($name)
 {
     $path = $env:LOCALAPPDATA + "\Microsoft\WinGet\Packages\"
-    Get-ChildItem -Path $path -recurse -filter "*${name}*" -ErrorAction SilentlyContinue | ForEach-Object {
+    Get-ChildItem -Path $path -recurse -filter "*$name*" -ErrorAction SilentlyContinue | ForEach-Object {
         return "$( $_.directory )\$( $_ )"
     }
 }
@@ -66,10 +69,16 @@ if (-not $noFont)
 {
     Write-Host "Installing fonts..."
 
-    irm https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/JetBrainsMono.zip -OutFile $env:TMP\JetBrainsMono.zip
+    Invoke-WebRequest "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/JetBrainsMono.zip" -OutFile $env:TMP\JetBrainsMono.zip
     Expand-Archive $env:TMP\JetBrainsMono.zip -DestinationPath $env:TMP\JetBrainsMono
-    $fonts = $env:TMP + "\JetBrainsMono\*.ttf"
-    Copy-Item $fonts -Destination "C:\Windows\Fonts"
+    $fonts = Get-ChildItem -Path $env:TMP\JetBrainsMono -Recurse -Filter "*.ttf"
+    $fontViewer = New-Object -ComObject Shell.Application
+    $fonts | ForEach-Object {
+        Write-Host "Installing $( $_.Name )..."
+        $fontViewer.Namespace(0x14).CopyHere($_.FullName)
+    }
+    Remove-Item -Path $env:TMP\JetBrainsMono -Recurse -Force
+    Remove-Item -Path $env:TMP\JetBrainsMono.zip -Force
 }
 
 Write-Host "Setup complete!"
