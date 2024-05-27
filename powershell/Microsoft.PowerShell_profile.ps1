@@ -214,15 +214,20 @@ function sha256
     Write-Host $hash.Hash
 }
 
-function grep($regex, $dir)
+function grep
 {
-    if ($dir)
-    {
-        Get-ChildItem $dir | select-string $regex
-        return
+    param (
+        [string] $regex = $( throw "Please provide a regex to search for" ),
+        [Parameter(ValueFromPipeline = $true)]
+        [string] $content,
+        [switch] $caseSensitive = $false
+    )
+
+    process {
+            $content | select-string -Pattern $regex -CaseSensitive:$caseSensitive
     }
-    $input | select-string $regex
 }
+
 
 function df
 {
@@ -315,6 +320,7 @@ function touch($file)
 {
     "" | Out-File $file -Encoding ASCII
 }
+
 function ff($name)
 {
     Get-ChildItem -recurse -filter "*${name}*" -ErrorAction SilentlyContinue | ForEach-Object {
@@ -371,8 +377,8 @@ function fif
 function cbcp
 {
     param (
-    [Parameter(ValueFromPipeline = $true, Mandatory = $true)]
-    [string] $content
+        [Parameter(ValueFromPipeline = $true, Mandatory = $true)]
+        [string] $content
     )
     Set-Clipboard -Value $content
 }
