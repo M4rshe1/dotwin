@@ -222,9 +222,27 @@ function grep
         [string] $content,
         [switch] $caseSensitive = $false
     )
-
+    begin {
+        $lineNumber = 0
+    }
     process {
-            $content | select-string -Pattern $regex -CaseSensitive:$caseSensitive
+        $content -split "`r`n" | ForEach-Object {
+            if ($caseSensitive)
+            {
+                if ($_ -match $regex)
+                {
+                    Write-Host "$( $_ ):$lineNumber"
+                }
+            }
+            else
+            {
+                if ($_ -imatch $regex)
+                {
+                    Write-Host "$( $_ ):$lineNumber"
+                }
+            }
+            $lineNumber++
+        }
     }
 }
 
