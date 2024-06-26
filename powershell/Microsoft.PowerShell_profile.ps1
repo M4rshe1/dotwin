@@ -121,6 +121,10 @@ function c
     }
 }
 
+function Add-SSHKey {
+    irm "https://raw.githubusercontent.com/M4rshe1/tups1s/master/USB/Scripts/remote/add-ssh-key.ps1" | iex
+}
+
 function ctt
 {
     irm christitus.com/win | iex
