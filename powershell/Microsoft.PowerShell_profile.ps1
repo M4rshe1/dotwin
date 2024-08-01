@@ -421,7 +421,7 @@ else
 if (Get-Command oh-my-posh -ErrorAction SilentlyContinue)
 {
 
-    Invoke-Expression (& { (oh-my-posh init pwsh --config "https://raw.githubusercontent.com/M4rshe1/dotwin/master/ohmyposh/theme.omp.json" | Invoke-Expression) })
+    oh-my-posh init pwsh --config "https://raw.githubusercontent.com/M4rshe1/dotwin/master/ohmyposh/theme.omp.json" | Invoke-Expression
 }
 else
 {
@@ -430,7 +430,7 @@ else
     {
         winget install JanDeDobbeleer.OhMyPosh -s winget
         Write-Host "oh-my-posh installed successfully. Initializing..."
-        Invoke-Expression (& { (oh-my-posh init pwsh --config "https://raw.githubusercontent.com/M4rshe1/dotwin/master/ohmyposh/theme.omp.json" | Invoke-Expression) })
+        oh-my-posh init pwsh --config "https://raw.githubusercontent.com/M4rshe1/dotwin/master/ohmyposh/theme.omp.json" | Invoke-Expression
     }
     catch
     {
