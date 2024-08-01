@@ -121,6 +121,10 @@ function c
     }
 }
 
+function Add-SSHKey {
+    irm "https://raw.githubusercontent.com/M4rshe1/tups1s/master/USB/Scripts/remote/add-ssh-key.ps1" | iex
+}
+
 function ctt
 {
     irm christitus.com/win | iex
@@ -214,14 +218,36 @@ function sha256
     Write-Host $hash.Hash
 }
 
-function grep($regex, $dir)
+function grep
 {
-    if ($dir)
-    {
-        Get-ChildItem $dir | select-string $regex
-        return
+    param (
+        [string] $regex = $( throw "Please provide a regex to search for" ),
+        [Parameter(ValueFromPipeline = $true)]
+        [string] $content,
+        [switch] $caseSensitive = $false
+    )
+    begin {
+        $lineNumber = 0
     }
-    $input | select-string $regex
+    process {
+        $content -split "`r`n" | ForEach-Object {
+            if ($caseSensitive)
+            {
+                if ($_ -match $regex)
+                {
+                    Write-Host "$( $_ ):$lineNumber"
+                }
+            }
+            else
+            {
+                if ($_ -imatch $regex)
+                {
+                    Write-Host "$( $_ ):$lineNumber"
+                }
+            }
+            $lineNumber++
+        }
+    }
 }
 
 function df
@@ -308,7 +334,7 @@ function rmrf($path)
 function ff($name)
 {
     Get-ChildItem -recurse -filter "*${name}*" -ErrorAction SilentlyContinue | ForEach-Object {
-        Write-Output "$( $_.directory )\$( $_ )"
+        Write-Output "$( $_ )"
     }
 }
 
