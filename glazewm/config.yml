@@ -225,7 +225,7 @@ keybindings:
     binding: "Alt+Shift+R"
 
   - command: "exec wt"
-    binding: "Alt+Enter"
+    binding: "Alt+Ctrl+T"
   - command: "exec %ProgramFiles%/Thorium/Application/thorium.exe"
     binding: "Alt+P"
   - command: "exec pycharm"

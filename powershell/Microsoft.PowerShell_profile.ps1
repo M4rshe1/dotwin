@@ -259,11 +259,6 @@ function which($name)
     Get-Command $name | Select-Object -ExpandProperty Definition
 }
 
-function export($name, $value)
-{
-    [Environment]::SetEnvironmentVariable($name, $value, "User")
-}
-
 function pkill($name)
 {
     Get-Process $name -ErrorAction SilentlyContinue | Stop-Process
@@ -310,11 +305,6 @@ function rmrf($path)
     }
 }
 
-
-function touch($file)
-{
-    "" | Out-File $file -Encoding ASCII
-}
 function ff($name)
 {
     Get-ChildItem -recurse -filter "*${name}*" -ErrorAction SilentlyContinue | ForEach-Object {
@@ -371,8 +361,8 @@ function fif
 function cbcp
 {
     param (
-    [Parameter(ValueFromPipeline = $true, Mandatory = $true)]
-    [string] $content
+        [Parameter(ValueFromPipeline = $true, Mandatory = $true)]
+        [string] $content
     )
     Set-Clipboard -Value $content
 }
@@ -401,3 +391,24 @@ else
         Write-Error "Failed to install zoxide. Error: $_"
     }
 }
+
+if (Get-Command oh-my-posh -ErrorAction SilentlyContinue)
+{
+
+    Invoke-Expression (& { (oh-my-posh init pwsh --config "https://raw.githubusercontent.com/M4rshe1/dotwin/master/ohmyposh/theme.omp.json" | Invoke-Expression) })
+}
+else
+{
+    Write-Host "oh-my-posh command not found. Attempting to install via PowerShellGet..."
+    try
+    {
+        winget install JanDeDobbeleer.OhMyPosh -s winget
+        Write-Host "oh-my-posh installed successfully. Initializing..."
+        Invoke-Expression (& { (oh-my-posh init pwsh --config "https://raw.githubusercontent.com/M4rshe1/dotwin/master/ohmyposh/theme.omp.json" | Invoke-Expression) })
+    }
+    catch
+    {
+        Write-Error "Failed to install oh-my-posh. Error: $_"
+    }
+}
+

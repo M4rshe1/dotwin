@@ -1,11 +1,164 @@
-param (
-    [Switch]$noInstall,
-    [Switch]$noConfig,
-    [Switch]$noStartup,
-    [Switch]$noFont
-)
+Function Show-MenuSelect()
+{
 
-$isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")
+    Param(
+        [Parameter(Mandatory = $True)][String]$MenuTitle,
+        [Parameter(Mandatory = $True)][String]$MenuBanner,
+        [Parameter(Mandatory = $True)][array]$MenuOptions
+    )
+
+    $MaxValue = $MenuOptions.count - 1
+    $Selection = 0
+    $EnterPressed = $False
+
+    Clear-Host
+
+    While ($EnterPressed -eq $False)
+    {
+        if ($MenuBanner.Length -ne 1)
+        {
+            Write-Host "$MenuBanner"
+        }
+        Write-Host "$MenuTitle"
+
+        For ($i = 0; $i -le $MaxValue; $i++) {
+
+            If ($i -eq $Selection)
+            {
+                Write-Host -BackgroundColor DarkGray -ForegroundColor White "[ $( $MenuOptions[$i] ) ]"
+            }
+            Else
+            {
+                Write-Host "  $( $MenuOptions[$i] )  "
+            }
+
+        }
+
+        $KeyInput = $host.ui.rawui.readkey("NoEcho,IncludeKeyDown").virtualkeycode
+
+        Switch ($KeyInput)
+        {
+            13 {
+                $EnterPressed = $True
+                Return $Selection
+                Clear-Host
+                break
+            }
+
+            38 {
+                If ($Selection -eq 0)
+                {
+                    $Selection = $MaxValue
+                }
+                Else
+                {
+                    $Selection -= 1
+                }
+                Clear-Host
+                break
+            }
+
+            40 {
+                If ($Selection -eq $MaxValue)
+                {
+                    $Selection = 0
+                }
+                Else
+                {
+                    $Selection += 1
+                }
+                Clear-Host
+                break
+            }
+            Default {
+                Clear-Host
+            }
+        }
+    }
+}
+
+Function Show-MenuSelect()
+{
+
+    Param(
+        [Parameter(Mandatory = $True)][String]$MenuTitle,
+        [Parameter(Mandatory = $True)][String]$MenuBanner,
+        [Parameter(Mandatory = $True)][array]$MenuOptions
+    )
+
+    $MaxValue = $MenuOptions.count - 1
+    $Selection = 0
+    $EnterPressed = $False
+
+    Clear-Host
+
+    While ($EnterPressed -eq $False)
+    {
+        if ($MenuBanner.Length -ne 1)
+        {
+            Write-Host "$MenuBanner"
+        }
+        Write-Host "$MenuTitle"
+
+        For ($i = 0; $i -le $MaxValue; $i++) {
+
+            If ($i -eq $Selection)
+            {
+                Write-Host -BackgroundColor DarkGray -ForegroundColor White "[ $( $MenuOptions[$i] ) ]"
+            }
+            Else
+            {
+                Write-Host "  $( $MenuOptions[$i] )  "
+            }
+
+        }
+
+        $KeyInput = $host.ui.rawui.readkey("NoEcho,IncludeKeyDown").virtualkeycode
+
+        Switch ($KeyInput)
+        {
+            13 {
+                $EnterPressed = $True
+                Return $Selection
+                Clear-Host
+                break
+            }
+
+            38 {
+                If ($Selection -eq 0)
+                {
+                    $Selection = $MaxValue
+                }
+                Else
+                {
+                    $Selection -= 1
+                }
+                Clear-Host
+                break
+            }
+
+            40 {
+                If ($Selection -eq $MaxValue)
+                {
+                    $Selection = 0
+                }
+                Else
+                {
+                    $Selection += 1
+                }
+                Clear-Host
+                break
+            }
+            Default {
+                Clear-Host
+            }
+        }
+    }
+}
+
+Invoke-RestMethod "https://raw.githubusercontent.com/M4rshe1/dotwin/master/settings/settings.json" | Out-File $env:TMP\settings.json
+$Global:settings = Get-Content $env:TMP\settings.json | ConvertFrom-Json
+$isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")
 
 if (-not $isAdmin)
 {
@@ -13,18 +166,15 @@ if (-not $isAdmin)
     exit
 }
 
-if (-not $noInstall)
+function install-Softwares
 {
     Write-Host "Installing software..."
-
-    Invoke-RestMethod "https://raw.githubusercontent.com/M4rshe1/dotwin/master/ctt/ctt.json" | Out-File $env:TMP\ctt.json
-
-    Invoke-Expression "& { $( Invoke-RestMethod christitus.com/win ) } -Config $env:TMP\ctt.json -Run"
-    winget install glazewm
+    $Global:settings.software | ForEach-Object {
+        winget install $_ -y
+    }
 }
 
-
-if (-not $noConfig)
+function Set-Settings
 {
     Write-Host "Add config files..."
     if (-not (Test-Path $PROFILE))
@@ -33,21 +183,26 @@ if (-not $noConfig)
     }
     # go to the home directory
     Set-Location ~
-
-    Invoke-RestMethod "https://raw.githubusercontent.com/M4rshe1/dotwin/master/powershell/Microsoft.PowerShell_profile.ps1" | Out-File $PROFILE -Force
-    Invoke-RestMethod "https://raw.githubusercontent.com/M4rshe1/dotwin/master/shell/shell.nss" | Out-File "C:\Program Files\Nilesoft Shell\shell.nss" $env:LOCALAPPDATA -Force
-    Invoke-RestMethod "https://raw.githubusercontent.com/M4rshe1/dotwin/master/glazewm/config.yml" | Out-File ".glaze-wm\config.yml" -Force
-    Invoke-RestMethod "https://raw.githubusercontent.com/M4rshe1/dotwin/master/terminal/settings.json" | Out-File "$env:LOCALAPPDATA\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json" -Force
+    $base_url = "https://raw.githubusercontent.com/M4rshe1/dotwin/master"
+    Invoke-RestMethod "$base_url/powershell/Microsoft.PowerShell_profile.ps1" | Out-File $PROFILE -Force
+    Invoke-RestMethod "$base_url/shell/shell.nss" | Out-File "C:\Program Files\Nilesoft Shell\shell.nss" $env:LOCALAPPDATA -Force
+    Invoke-RestMethod "$base_url/glazewm/config.yml" | Out-File ".glaze-wm\config.yml" -Force
+    Invoke-RestMethod "$base_url/terminal/settings.json" | Out-File "$env:LOCALAPPDATA\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json" -Force
 }
 
 
 
-function Add-StartUpShortcut($name, $path)
+function Add-StartUpShortcut($name, $pathm, $admin)
 {
     $shortcut = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup\$name.lnk"
     $shell = New-Object -ComObject WScript.Shell
     $shortcut = $shell.CreateShortcut($shortcut)
     $shortcut.TargetPath = $path
+
+    if ($admin)
+    {
+        $shortcut.Arguments = "-ExecutionPolicy Bypass -File $path"
+    }
     $shortcut.Save()
 }
 
@@ -59,13 +214,13 @@ function Get-WinGetProgramPath($name)
     }
 }
 
-if (-not $noStartup)
+function Add-StartUpShortcuts
 {
     Write-Host "Adding startup shortcuts..."
     Add-StartUpShortcut "glazewm" (Get-WinGetProgramPath "glazewm.exe")
 }
 
-if (-not $noFont)
+function Install-Fonts
 {
     Write-Host "Installing fonts..."
 
