@@ -156,7 +156,7 @@ Function Show-MenuSelect()
     }
 }
 
-Invoke-RestMethod "https://raw.githubusercontent.com/M4rshe1/dotwin/master/settings/settings.json" | Out-File $env:TMP\settings.json
+Invoke-RestMethod "https://raw.githubusercontent.com/M4rshe1/dotwin/master/config.json" | Out-File $env:TMP\settings.json
 $Global:settings = Get-Content $env:TMP\settings.json | ConvertFrom-Json
 $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")
 
@@ -185,7 +185,7 @@ function Set-Settings
     Set-Location ~
     $base_url = "https://raw.githubusercontent.com/M4rshe1/dotwin/master"
     Invoke-RestMethod "$base_url/powershell/Microsoft.PowerShell_profile.ps1" | Out-File $PROFILE -Force
-    Invoke-RestMethod "$base_url/shell/shell.nss" | Out-File "C:\Program Files\Nilesoft Shell\shell.nss" $env:LOCALAPPDATA -Force
+    Invoke-RestMethod "$base_url/shell/shell.nss" | Out-File "C:\Program Files\Nilesoft Shell\shell.nss" -Force
     Invoke-RestMethod "$base_url/glazewm/config.yml" | Out-File ".glaze-wm\config.yml" -Force
     Invoke-RestMethod "$base_url/terminal/settings.json" | Out-File "$env:LOCALAPPDATA\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json" -Force
 }

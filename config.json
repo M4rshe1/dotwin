@@ -1,4 +1,24 @@
 {
+  "config_files": [
+    {
+      "friendly_name": "PowerShell",
+      "name": "microsoft.powershell",
+      "url": "https://raw.githubusercontent.com/M4rshe1/dotwin/master/powershell/Microsoft.PowerShell_profile.ps1",
+      "local": "\"$PROFILE\""
+    },
+    {
+      "friendly_name": "Nilesoft Shell",
+      "name": "nilesoft.shell",
+      "url": "https://raw.githubusercontent.com/M4rshe1/dotwin/master/shell/shell.nss",
+      "local": "C:\\Program Files\\Nilesoft Shell\\shell.nss"
+    },
+    {
+      "friendly_name": "GlazeWM",
+      "name": "glzr-io.glazewm",
+      "url": "https://raw.githubusercontent.com/M4rshe1/dotwin/master/shell/shell.nss",
+      "local": "\"$env:USERPROFILE\\.glaze-wm\\config.yml\""
+    }
+  ],
   "software": [
     "dotPDN.PaintDotNet",
     "WinSCP.WinSCP",
@@ -34,6 +54,6 @@
     "Spotify.Spotify",
     "JohnMarcFerlane.Pandoc",
     "glzr-io.glazewm",
-    "Mozilla.Firefox",
+    "Mozilla.Firefox"
   ]
 }
