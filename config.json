@@ -2,7 +2,7 @@
   "config_files": [
     {
       "friendly_name": "PowerShell",
-      "name": "microsoft.powershell",
+      "name": "powershell",
       "url": "https://raw.githubusercontent.com/M4rshe1/dotwin/master/powershell/Microsoft.PowerShell_profile.ps1",
       "local": "\"$PROFILE\""
     },
@@ -14,7 +14,7 @@
     },
     {
       "friendly_name": "GlazeWM",
-      "name": "glzr-io.glazewm",
+      "name": "glazewm",
       "url": "https://raw.githubusercontent.com/M4rshe1/dotwin/master/shell/shell.nss",
       "local": "\"$env:USERPROFILE\\.glaze-wm\\config.yml\""
     }
