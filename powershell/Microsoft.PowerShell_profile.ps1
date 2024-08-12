@@ -34,6 +34,7 @@ if (-not (Get-Module -ListAvailable -Name Terminal-Icons))
 {
     Install-Module -Name Terminal-Icons -Scope CurrentUser -Force -SkipPublisherCheck
 }
+
 Import-Module -Name Terminal-Icons
 
 function Update-Profile
@@ -67,9 +68,7 @@ function Update-Profile
 }
 Update-Profile
 
-
-Set-PSReadLineOption -PredictionSource History
-Set-PSReadLineOption -PredictionViewStyle ListView
+Set-PSReadLineOption -PredictionSource History -PredictionViewStyle ListView
 
 function e
 {
@@ -79,49 +78,8 @@ function e
     explorer $path
 }
 
-function cdn
+function Add-SSHKey
 {
-    param (
-        [string]$path = "."
-    )
-    Set-Location -Path $path
-    nvim .
-}
-
-function c
-{
-    [string]$path = $PWD
-
-    if (Test-Path $path -PathType Leaf)
-    {
-        $path = $path | Split-Path
-    }
-
-    if (Get-Command pycharm -ErrorAction SilentlyContinue)
-    {
-        cd $path
-        pycharm .
-        return
-    }
-    elseif (Get-Command code -ErrorAction SilentlyContinue)
-    {
-        cd $path
-        code .
-        return
-    }
-    elseif (Get-Command nvim -ErrorAction SilentlyContinue)
-    {
-        cd $path
-        nvim .
-        return
-    }
-    else
-    {
-        notepad $path
-    }
-}
-
-function Add-SSHKey {
     irm "https://raw.githubusercontent.com/M4rshe1/tups1s/master/USB/Scripts/remote/add-ssh-key.ps1" | iex
 }
 
@@ -134,74 +92,6 @@ function ctt
 function Get-PubIP
 {
     (Invoke-WebRequest http://ifconfig.me/ip).Content
-}
-
-# System Utilities
-function uptime
-{
-    $uptime = Get-WmiObject -Class Win32_OperatingSystem | Select-Object -ExpandProperty LastBootUpTime | ForEach-Object { [Management.ManagementDateTimeConverter]::ToDateTime($_) }
-    $uptime = New-TimeSpan -Start $uptime -End (Get-Date) | Select-Object -Property Days, Hours, Minutes, Seconds
-    "$( $uptime.Days ) days, $( $uptime.Hours ) hours, $( $uptime.Minutes ) minutes, $( $uptime.Seconds ) seconds"
-}
-
-function cb
-{
-    param(
-        [string]$path = "",
-        [string]$rm,
-        [Switch]$ls,
-        [String]$token = [Environment]::GetEnvironmentVariable("CB_TOKEN", "User"),
-        [String]$serverURI = "https://bin.heggli.dev"
-    )
-
-    if ($token -eq "")
-    {
-        $token = Read-Host "Please provide a token`n>> "
-        [Environment]::SetEnvironmentVariable("CB_TOKEN", $token, "User")
-    }
-
-    if ($rm)
-    {
-        if ($rm -eq "")
-        {
-            Write-Host "No fileid provided" -ForegroundColor Red
-            return
-        }
-
-        $headers = @{
-            'Content-Type' = 'application/json'
-        }
-        $body = @{
-            token = $token
-        }
-        Invoke-RestMethod -Uri "$( $serverURI )/$( $rm )?token=$( $token )" -Method Delete -Body $body -Headers $headers
-        return
-    }
-    if ($ls)
-    {
-        $body = @{
-            token = $token
-        }
-        Invoke-RestMethod -Uri "$( $serverURI )/ls" -Method Get -Body $body
-        return
-    }
-    if ($path -eq "")
-    {
-        Write-Host "No path provided" -ForegroundColor Red
-        return
-    }
-    if (-not (Test-Path $path))
-    {
-        Write-Host "File not found" -ForegroundColor Red
-        return
-    }
-    $content = Get-Content $path -Raw
-    $body = @{
-        file = $content
-        token = $token
-        filename = $path.Split("\")[-1].Split("/")[-1]
-    }
-    Invoke-RestMethod -Uri $serverURI -Method Get -Body $body
 }
 
 function sha256
@@ -248,11 +138,6 @@ function grep
             $lineNumber++
         }
     }
-}
-
-function df
-{
-    get-volume
 }
 
 function unzip()
@@ -418,19 +303,31 @@ else
     }
 }
 
+
+try
+{
+    $url = "https://raw.githubusercontent.com/M4rshe1/dotwin/master/ohmyposh/theme.omp.json"
+    $oldhash = Get-FileHash "$env:USERPROFILE/theme.omp.json"
+    Invoke-RestMethod $url -OutFile "$env:temp/theme.omp.json"
+    $newhash = Get-FileHash "$env:temp/theme.omp.json"
+    Copy-Item -Path "$env:temp/theme.omp.json" -Destination "$env:USERPROFILE/theme.omp.json" -Force
+}
+catch
+{
+    Write-Error "Unable to check for oh-my-posh theme updates"
+}
+
 if (Get-Command oh-my-posh -ErrorAction SilentlyContinue)
 {
 
-    oh-my-posh init pwsh --config "https://raw.githubusercontent.com/M4rshe1/dotwin/master/ohmyposh/theme.omp.json" | Invoke-Expression
-}
-else
-{
-    Write-Host "oh-my-posh command not found. Attempting to install via PowerShellGet..."
+    oh-my-posh init pwsh --config "$env:USERPROFILE/theme.omp.json" | Invoke-Expression
+} else {
+    Write-Host "oh-my-posh command not found. Attempting to install via winget..."
     try
     {
         winget install JanDeDobbeleer.OhMyPosh -s winget
         Write-Host "oh-my-posh installed successfully. Initializing..."
-        oh-my-posh init pwsh --config "https://raw.githubusercontent.com/M4rshe1/dotwin/master/ohmyposh/theme.omp.json" | Invoke-Expression
+        oh-my-posh init pwsh --config "$env:USERPROFILE/theme.omp.json" | Invoke-Expression
     }
     catch
     {
