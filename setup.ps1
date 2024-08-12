@@ -181,13 +181,16 @@ function Set-Settings
     {
         New-Item -ItemType File -Path $PROFILE -Force
     }
-    # go to the home directory
-    Set-Location ~
-    $base_url = "https://raw.githubusercontent.com/M4rshe1/dotwin/master"
-    Invoke-RestMethod "$base_url/powershell/Microsoft.PowerShell_profile.ps1" | Out-File $PROFILE -Force
-    Invoke-RestMethod "$base_url/shell/shell.nss" | Out-File "C:\Program Files\Nilesoft Shell\shell.nss" -Force
-    Invoke-RestMethod "$base_url/glazewm/config.yml" | Out-File ".glaze-wm\config.yml" -Force
-    Invoke-RestMethod "$base_url/terminal/settings.json" | Out-File "$env:LOCALAPPDATA\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json" -Force
+    $Global:settings.config_files | ForEach-Object {
+        $file = $_
+        if ($file.init_only)
+        {
+            Write-Host "Ignoring $($file.name)..." -ForegroundColor Yellow
+            return
+        }
+        Write-Host "Updating $($file.name)..." -ForegroundColor Green
+        Invoke-RestMethod  $($file.url) | Out-File $($file.local | iex)
+    }
 }
 
 

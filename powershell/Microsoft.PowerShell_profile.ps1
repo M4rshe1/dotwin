@@ -303,6 +303,18 @@ else
     }
 }
 
+function Update-Config ($isInit) {
+    $Global:settings.config_files | ForEach-Object {
+        $file = $_
+        if ($file.init_only -and -not $isInit)
+        {
+            Write-Host "Ignoring $($file.name)..." -ForegroundColor Yellow
+            return
+        }
+        Write-Host "Updating $($file.name)..." -ForegroundColor Green
+        Invoke-RestMethod  $($file.url) | Out-File $($file.local | iex)
+    }
+}
 
 try
 {

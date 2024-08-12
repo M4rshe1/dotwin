@@ -1,23 +1,30 @@
 {
   "config_files": [
     {
-      "friendly_name": "PowerShell",
-      "name": "powershell",
+      "name": "PowerShell",
       "url": "https://raw.githubusercontent.com/M4rshe1/dotwin/master/powershell/Microsoft.PowerShell_profile.ps1",
-      "local": "\"$PROFILE\""
+      "local": "\"$PROFILE\"",
+      "init_only": false
     },
     {
-      "friendly_name": "Nilesoft Shell",
-      "name": "nilesoft.shell",
+      "name": "Nilesoft Shell",
       "url": "https://raw.githubusercontent.com/M4rshe1/dotwin/master/shell/shell.nss",
-      "local": "C:\\Program Files\\Nilesoft Shell\\shell.nss"
+      "local": "\"C:\\Program Files\\Nilesoft Shell\\shell.nss\"",
+      "init_only": false
     },
     {
-      "friendly_name": "GlazeWM",
-      "name": "glazewm",
+      "name": "GlazeWM",
       "url": "https://raw.githubusercontent.com/M4rshe1/dotwin/master/shell/shell.nss",
-      "local": "\"$env:USERPROFILE\\.glaze-wm\\config.yml\""
+      "local": "\"$env:USERPROFILE\\.glaze-wm\\config.yml\"",
+      "init_only": false
+    },
+    {
+      "name": "Windows Terminal",
+      "url": "https://raw.githubusercontent.com/M4rshe1/dotwin/master/terminal/settings.json\" ",
+      "local": "\"$env:LOCALAPPDATA\\Microsoft.WindowsTerminal_8wekyb3d8bbwe\\LocalState\\settings.json\"",
+      "init_only": true
     }
+
   ],
   "software": [
     "dotPDN.PaintDotNet",
