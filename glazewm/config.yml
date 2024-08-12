@@ -20,17 +20,19 @@ overlay1: &overlay1 "#838ba7"
 overlay0: &overlay0 "#737994"
 surface2: &surface2 "#626880"
 surface1: &surface1 "#51576d"
-surface0: &surface0 "#414559"
+surface0: &surface0 "#3b414d"
 base: &base "#303446"
 mantle: &mantle "#292c3c"
-crust: &crust "#232634"
+crust: &crust "#2e3440"
+dark_purple: &dark_purple "#6c77bb"
+light_purple: &light_purple "#828dd1"
 
 general:
   # Whether to automatically focus windows underneath the cursor.
   focus_follows_cursor: false
 
   # Whether to jump the cursor between windows focused by the WM.
-  cursor_follows_focus: True
+  cursor_follows_focus: False
 
   # Whether to switch back and forth between the previously focused workspace
   # when focusing the current workspace.
@@ -62,7 +64,7 @@ gaps:
 focus_borders:
   active:
     enabled: true
-    color: *lavender
+    color: *light_purple
 
   inactive:
     enabled: false
@@ -73,9 +75,7 @@ bar:
   position: "Top"
   opacity: 1.0
   background: *crust
-  foreground: *mauve
-#  background: "#20242cc4"
-#  foreground: "#ffffff"
+  foreground: *light_purple
   font_family: "JetBrainsMono Nerd Font Mono"
   font_size: "13px"
   padding: "4px 6px"
@@ -84,30 +84,51 @@ bar:
   border_radius: "0"
   components_left:
     - type: "workspaces"
-      focused_workspace_background: *mauve
+      focused_workspace_background: *light_purple
       focused_workspace_foreground: *crust
       displayed_workspace_background: *surface0
       default_workspace_background: "transparent"
       margin: "0 2px"
     - type: "cpu"
-      label: "CPU: {percent_usage}%"
+      label: "CPU"
+      margin: "0 0 0 2px"
+      background: *peach
+      foreground: "#000000"
+      padding: "0 10px"
+      refresh_interval_ms: 100000
+    - type: "cpu"
+      label: "{percent_usage}%"
       margin: "0 2px"
       background: *surface0
-      foreground: *blue
+      foreground: *peach
       padding: "0 10px"
       refresh_interval_ms: 1000
     - type: "gpu"
-      label: "GPU: {percent_usage}%"
+      label: "GPU"
+      margin: "0 0 0 2px"
+      background: *green
+      foreground: "#000000"
+      padding: "0 10px"
+      refresh_interval_ms: 100000
+    - type: "gpu"
+      label: "{percent_usage}%"
       margin: "0 2px"
       background: *surface0
       foreground: *green
       padding: "0 10px"
       refresh_interval_ms: 1000
     - type: "memory"
-      label: "MEM: {percent_usage}%"
+      label: "MEM"
+      margin: "0 0 0 2px"
+      background: *yellow
+      foreground: "#000000"
+      padding: "0 10px"
+      refresh_interval_ms: 100000
+    - type: "memory"
+      label: "{percent_usage}%"
       margin: "0 2px"
       background: *surface0
-      foreground: *peach
+      foreground: *yellow
       padding: "0 10px"
       refresh_interval_ms: 1000
   components_center:
@@ -115,26 +136,47 @@ bar:
   components_right:
     - type: "system tray"
       margin: "0 4px"
+    - type: "battery"
+      margin: "0 0 0 2px"
+      background: *yellow
+      foreground: *surface0
+      padding: "0 5px"
+      label_draining: "🔋"
+      label_power_saver: "⚠"
+      label_charging: "🗲"
+    - type: "battery"
+      margin: "0 2px 0 0"
+      foreground: *yellow
+      background: *surface0
+      padding: "0 10px"
+      label_draining: "{battery_level}%"
+      label_power_saver: "{battery_level}%"
+      label_charging: "{battery_level}%"
     - type: "tiling direction"
       label_horizontal: "⮂"
       label_vertical: "⮁"
-      background: *surface0
-      margin: "0 2px"
+      background: *light_purple
+      foreground: "#000000"
+      margin: "0 0 0 2px"
       padding: "0 8px"
-    - type: "battery"
-      margin: "0 2px"
+    - type: "tiling direction"
+      label_horizontal: "Horizontal"
+      label_vertical: "Vertical"
+      foreground: *lavender
       background: *surface0
-      foreground: *yellow
-      padding: "0 10px"
-      label_draining: "{battery_level}%"
-      label_power_saver: "{battery_level}% !"
-      label_charging: "{battery_level}% 🗲"
+      margin: "0 2px 0 0"
+      padding: "0 8px"
     - type: "clock"
-      margin: "0 2px"
+      margin: "0 0 0 2px"
       padding: "0 6px"
-      background: *surface0
-      # Documentation on formatting date/time string:
-      # https://learn.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings
+      background: *light_purple
+      foreground: "#000000"
+      time_formatting: "📅"
+    - type: "clock"
+      margin: "0 2px 0 0"
+      padding: "0 6px"
+      background: *dark_purple
+      foreground: "#000000"
       time_formatting: "HH:mm  ddd dd.MM.yyyy (w)"
 
 workspaces:
