@@ -62,7 +62,7 @@ gaps:
 focus_borders:
   active:
     enabled: true
-    color: "#ff0000"
+    color: *lavender
 
   inactive:
     enabled: false
@@ -72,8 +72,10 @@ bar:
   height: "30px"
   position: "Top"
   opacity: 1.0
-  background: "#20242cc4"
-  foreground: "#ffffff"
+  background: *crust
+  foreground: *mauve
+#  background: "#20242cc4"
+#  foreground: "#ffffff"
   font_family: "JetBrainsMono Nerd Font Mono"
   font_size: "13px"
   padding: "4px 6px"
@@ -82,8 +84,9 @@ bar:
   border_radius: "0"
   components_left:
     - type: "workspaces"
-      focused_workspace_background: *surface0
-      displayed_workspace_background: "#00000033"
+      focused_workspace_background: *mauve
+      focused_workspace_foreground: *crust
+      displayed_workspace_background: *surface0
       default_workspace_background: "transparent"
       margin: "0 2px"
     - type: "cpu"
@@ -226,10 +229,6 @@ keybindings:
 
   - command: "exec wt"
     binding: "Alt+Ctrl+T"
-  - command: "exec %ProgramFiles%/Thorium/Application/thorium.exe"
-    binding: "Alt+P"
-  - command: "exec pycharm"
-    binding: "Alt+C"
   - command: "exec explorer"
     binding: "Alt+E"
 
