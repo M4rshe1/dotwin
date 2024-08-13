@@ -1,0 +1,206 @@
+light_purple: &light_purple "#828dd1"
+
+
+general:
+  startup_commands: [ 'shell-exec %userprofile%/.glzr/zebar/start.bat' ]
+
+  focus_follows_cursor: true
+
+  toggle_workspace_on_refocus: true
+
+  cursor_jump:
+    enabled: false
+
+    trigger: 'window_focus'
+
+gaps:
+  inner_gap: '2px'
+
+  outer_gap:
+    top: '32px'
+    right: '2px'
+    bottom: '2px'
+    left: '2px'
+
+window_effects:
+  focused_window:
+    border:
+      enabled: true
+      color: *light_purple
+
+  other_windows:
+    border:
+      enabled: false
+      color: "#ff0000"
+
+window_behavior:
+  initial_state: 'tiling'
+
+  # Sets the default options for when a new window is created. This also
+  # changes the defaults for when the state change commands, like
+  # `set-floating`, are used without any flags.
+  state_defaults:
+    floating:
+      # Whether to center floating windows by default.
+      centered: true
+
+      # Whether to show floating windows as always on top.
+      shown_on_top: true
+
+    fullscreen:
+      # Maximize the window if possible. If the window doesn't have a
+      # maximize button, then it'll be fullscreen'ed normally instead.
+      maximized: false
+
+      # Whether to show fullscreen windows as always on top.
+      shown_on_top: false
+
+workspaces:
+  - name: '1'
+  - name: '2'
+  - name: '3'
+  - name: '4'
+  - name: '5'
+  - name: '6'
+  - name: '7'
+  - name: '8'
+  - name: '9'
+
+window_rules:
+  - commands: [ 'ignore' ]
+    match:
+      # Ignores any Zebar windows.
+      - window_process: { equals: 'zebar' }
+
+      # Ignores picture-in-picture windows for browsers.
+      - window_title: { regex: '[Pp]icture.in.[Pp]icture' }
+        window_class: { regex: 'Chrome_WidgetWin_1|MozillaDialogClass' }
+
+      # Ignore rules for various 3rd-party apps.
+      - window_process: { equals: 'PowerToys.PowerAccent' }
+      - window_process: { equals: 'Lively' }
+        window_class: { regex: 'HwndWrapper*' }
+#  - command: "resize borders 0px -7px -7px -7px"
+#    match_process_name: "steam"
+
+binding_modes:
+  # When enabled, the focused window can be resized via arrow keys or HJKL.
+  - name: 'resize'
+    keybindings:
+      - commands: [ 'resize --width -2%' ]
+        bindings: [ 'h', 'left' ]
+      - commands: [ 'resize --width +2%' ]
+        bindings: [ 'l', 'right' ]
+      - commands: [ 'resize --height +2%' ]
+        bindings: [ 'k', 'up' ]
+      - commands: [ 'resize --height -2%' ]
+        bindings: [ 'j', 'down' ]
+      # Press enter/escape to return to default keybindings.
+      - commands: [ 'wm-disable-binding-mode --name resize' ]
+        bindings: [ 'escape', 'enter' ]
+
+  # When enabled, all keybindings are disabled except for alt+shift+p which
+  # returns to default keybindings.
+  - name: 'pause'
+    keybindings:
+      - commands: [ 'wm-disable-binding-mode --name pause' ]
+        bindings: [ 'alt+shift+p' ]
+
+keybindings:
+  - commands: [ 'focus --direction left' ]
+    bindings: [ "Alt+j" ]
+  - commands: [ 'focus --direction right' ]
+    bindings: [ "alt+l" ]
+  - commands: [ 'focus --direction up' ]
+    bindings: [ "alt+i" ]
+  - commands: [ 'focus --direction down' ]
+    bindings: [ "alt+k" ]
+
+  - commands: [ 'move --direction left' ]
+    bindings: [ 'alt+shift+h', 'ctrl+shift+left' ]
+  - commands: [ 'move --direction right' ]
+    bindings: [ 'alt+shift+l', 'ctrl+shift+right' ]
+  - commands: [ 'move --direction up' ]
+    bindings: [ 'alt+shift+k', 'ctrl+shift+up' ]
+  - commands: [ 'move --direction down' ]
+    bindings: [ 'alt+shift+j', 'ctrl+shift+down' ]
+
+  - commands: [ 'resize --width -2%' ]
+    bindings: [ 'alt+left' ]
+  - commands: [ 'resize --width +2%' ]
+    bindings: [ 'alt+right' ]
+  - commands: [ 'resize --height +2%' ]
+    bindings: [ 'alt+up' ]
+  - commands: [ 'resize --height -2%' ]
+    bindings: [ 'alt+down' ]
+
+  - commands: [ 'toggle-tiling-direction' ]
+    bindings: [ 'alt+v' ]
+
+  - commands: [ 'toggle-floating --centered' ]
+    bindings: [ 'alt+shift+space' ]
+
+  - commands: [ 'toggle-tiling' ]
+    bindings: [ 'alt+shift+space' ]
+
+  - commands: [ 'toggle-fullscreen' ]
+    bindings: [ 'alt+x' ]
+
+  - commands: [ 'toggle-minimized' ]
+    bindings: [ 'alt+m' ]
+
+  - commands: [ 'close' ]
+    bindings: [ 'alt+q' ]
+
+  - commands: [ 'wm-exit' ]
+    bindings: [ 'alt+shift+e' ]
+
+  - commands: [ 'wm-reload-config', 'shell-exec %userprofile%/.glzr/zebar/start.bat' ]
+    bindings: [ 'alt+shift+r' ]
+
+  - commands: [ 'wm-redraw' ]
+    bindings: [ 'alt+shift+w' ]
+
+  - commands: [ 'shell-exec wt' ]
+    bindings: [ 'alt+ctrl+t' ]
+
+  - commands: [ 'shell-exec explorer' ]
+    bindings: [ 'alt+e' ]
+
+  - commands: [ 'focus --workspace 1' ]
+    bindings: [ 'alt+1' ]
+  - commands: [ 'focus --workspace 2' ]
+    bindings: [ 'alt+2' ]
+  - commands: [ 'focus --workspace 3' ]
+    bindings: [ 'alt+3' ]
+  - commands: [ 'focus --workspace 4' ]
+    bindings: [ 'alt+4' ]
+  - commands: [ 'focus --workspace 5' ]
+    bindings: [ 'alt+5' ]
+  - commands: [ 'focus --workspace 6' ]
+    bindings: [ 'alt+6' ]
+  - commands: [ 'focus --workspace 7' ]
+    bindings: [ 'alt+7' ]
+  - commands: [ 'focus --workspace 8' ]
+    bindings: [ 'alt+8' ]
+  - commands: [ 'focus --workspace 9' ]
+    bindings: [ 'alt+9' ]
+
+  - commands: [ 'move --workspace 1', 'focus --workspace 1' ]
+    bindings: [ 'alt+shift+1' ]
+  - commands: [ 'move --workspace 2', 'focus --workspace 2' ]
+    bindings: [ 'alt+shift+2' ]
+  - commands: [ 'move --workspace 3', 'focus --workspace 3' ]
+    bindings: [ 'alt+shift+3' ]
+  - commands: [ 'move --workspace 4', 'focus --workspace 4' ]
+    bindings: [ 'alt+shift+4' ]
+  - commands: [ 'move --workspace 5', 'focus --workspace 5' ]
+    bindings: [ 'alt+shift+5' ]
+  - commands: [ 'move --workspace 6', 'focus --workspace 6' ]
+    bindings: [ 'alt+shift+6' ]
+  - commands: [ 'move --workspace 7', 'focus --workspace 7' ]
+    bindings: [ 'alt+shift+7' ]
+  - commands: [ 'move --workspace 8', 'focus --workspace 8' ]
+    bindings: [ 'alt+shift+8' ]
+  - commands: [ 'move --workspace 9', 'focus --workspace 9' ]
+    bindings: [ 'alt+shift+9' ]

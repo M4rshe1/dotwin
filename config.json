@@ -19,6 +19,18 @@
       "init_only": false
     },
     {
+      "name": "GlazeWM Rust",
+      "url": "https://raw.githubusercontent.com/M4rshe1/dotwin/master/glazewm/configrust.yaml",
+      "local": "\"$env:USERPROFILE\\.glzr\\glazewm\\config.yml\"",
+      "init_only": false
+    },
+    {
+      "name": "ZeBar",
+      "url": "https://raw.githubusercontent.com/M4rshe1/dotwin/master/glazewm/zebar.yaml",
+      "local": "\"$env:USERPROFILE\\.glzr\\zebar\\config.yml\"",
+      "init_only": false
+    },
+    {
       "name": "Windows Terminal",
       "url": "https://raw.githubusercontent.com/M4rshe1/dotwin/master/terminal/settings.json\" ",
       "local": "\"$env:LOCALAPPDATA\\Microsoft.WindowsTerminal_8wekyb3d8bbwe\\LocalState\\settings.json\"",
