@@ -14,8 +14,8 @@
     },
     {
       "name": "GlazeWM",
-      "url": "https://raw.githubusercontent.com/M4rshe1/dotwin/master/glazewm/config.yml",
-      "local": "\"$env:USERPROFILE\\.glaze-wm\\config.yml\"",
+      "url": "https://raw.githubusercontent.com/M4rshe1/dotwin/master/glazewm/config.yaml",
+      "local": "\"$env:USERPROFILE\\.glaze-wm\\config.yaml\"",
       "init_only": false
     },
     {
