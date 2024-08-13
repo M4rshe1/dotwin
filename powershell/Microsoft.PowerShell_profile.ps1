@@ -304,15 +304,15 @@ else
 }
 
 function Update-Config ($isInit) {
-    $Global:settings.config_files | ForEach-Object {
-        $file = $_
-        if ($file.init_only -and -not $isInit)
+    $config = Invoke-RestMethod "https://raw.githubusercontent.com/M4rshe1/pwsh/master//config.json"
+    $config.config_files | ForEach-Object {
+        if ($_.init_only -and -not $isInit)
         {
-            Write-Host "Ignoring $($file.name)..." -ForegroundColor Yellow
+            Write-Host "Ignoring $($_.name)..." -ForegroundColor Yellow
             return
         }
-        Write-Host "Updating $($file.name)..." -ForegroundColor Green
-        Invoke-RestMethod  $($file.url) | Out-File $($file.local | iex)
+        Write-Host "Updating $($_.name)..." -ForegroundColor Green
+        Invoke-RestMethod  $_.url | Out-File $($_.local | iex)
     }
 }
 
