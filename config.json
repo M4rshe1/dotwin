@@ -14,19 +14,19 @@
     },
     {
       "name": "GlazeWM",
-      "url": "https://raw.githubusercontent.com/M4rshe1/dotwin/master/glazewm/config.yaml",
+      "url": "https://raw.githubusercontent.com/M4rshe1/dotwin/master/glazewm/legacy/config.yaml",
       "local": "\"$env:USERPROFILE\\.glaze-wm\\config.yaml\"",
       "init_only": false
     },
     {
       "name": "GlazeWM Rust",
-      "url": "https://raw.githubusercontent.com/M4rshe1/dotwin/master/glazewm/configrust.yaml",
+      "url": "https://raw.githubusercontent.com/M4rshe1/dotwin/master/glazewm/rust/config.yaml",
       "local": "\"$env:USERPROFILE\\.glzr\\glazewm\\config.yml\"",
       "init_only": false
     },
     {
       "name": "ZeBar",
-      "url": "https://raw.githubusercontent.com/M4rshe1/dotwin/master/glazewm/zebar.yaml",
+      "url": "https://raw.githubusercontent.com/M4rshe1/dotwin/master/zebar/config.yaml",
       "local": "\"$env:USERPROFILE\\.glzr\\zebar\\config.yml\"",
       "init_only": false
     },
