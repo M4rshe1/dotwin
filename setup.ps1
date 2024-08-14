@@ -189,7 +189,7 @@ function Set-Settings
             return
         }
         Write-Host "Updating $($file.name)..." -ForegroundColor Green
-        Invoke-RestMethod  $($file.url) | Out-File $($file.local | iex)
+        Invoke-RestMethod  $($file.url) | Out-File $($file.local | iex) -Force
     }
 }
 

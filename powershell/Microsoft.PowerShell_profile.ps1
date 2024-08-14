@@ -312,7 +312,7 @@ function Update-Config ($isInit) {
             return
         }
         Write-Host "Updating $($_.name)..." -ForegroundColor Green
-        Invoke-RestMethod  $_.url | Out-File $($_.local | iex)
+        Invoke-RestMethod  $_.url | Out-File $($_.local | iex) -Force
     }
 }
 

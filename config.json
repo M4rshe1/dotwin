@@ -21,13 +21,13 @@
     {
       "name": "GlazeWM Rust",
       "url": "https://raw.githubusercontent.com/M4rshe1/dotwin/master/glazewm/rust/config.yaml",
-      "local": "\"$env:USERPROFILE\\.glzr\\glazewm\\config.yml\"",
+      "local": "\"$env:USERPROFILE\\.glzr\\glazewm\\config.yaml\"",
       "init_only": false
     },
     {
       "name": "ZeBar",
       "url": "https://raw.githubusercontent.com/M4rshe1/dotwin/master/zebar/config.yaml",
-      "local": "\"$env:USERPROFILE\\.glzr\\zebar\\config.yml\"",
+      "local": "\"$env:USERPROFILE\\.glzr\\zebar\\config.yaml\"",
       "init_only": false
     },
     {
