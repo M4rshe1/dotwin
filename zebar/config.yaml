@@ -248,14 +248,14 @@ window/bar:
           border-radius: 2px 0 0 2px;
           height: 22px;
           margin: 0;
-          background: var(--light_purple);
+          background: var(--yellow);
           padding: 4px 8px;
           color: #000000;
         }
         .battery-percentage {
           display: flex;
           align-items: center;
-          color: #000000;
+          color: var(--yellow);
           height: 22px;
           background: var(--surface0);
           border-radius: 0 2px 2px 0;
