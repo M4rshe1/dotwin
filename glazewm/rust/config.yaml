@@ -156,7 +156,7 @@ keybindings:
   - commands: [ 'wm-exit' ]
     bindings: [ 'alt+shift+e' ]
 
-  - commands: [ 'wm-reload-config', 'shell-exec %userprofile%/.glzr/zebar/start.bat' ]
+  - commands: [ 'wm-reload-config']
     bindings: [ 'alt+shift+r' ]
 
   - commands: [ 'wm-redraw' ]
