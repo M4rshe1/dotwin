@@ -4,7 +4,7 @@ light_purple: &light_purple "#828dd1"
 general:
   startup_commands: [ 'shell-exec %userprofile%/.glzr/zebar/start.bat' ]
 
-  focus_follows_cursor: True
+  focus_follows_cursor: False
 
   toggle_workspace_on_refocus: True
 
