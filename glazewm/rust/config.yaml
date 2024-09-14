@@ -18,7 +18,7 @@ gaps:
   inner_gap: '2px'
 
   outer_gap:
-    top: '32px'
+    top: '42px'
     right: '2px'
     bottom: '2px'
     left: '2px'
@@ -205,3 +205,4 @@ keybindings:
     bindings: [ 'alt+shift+8' ]
   - commands: [ 'move --workspace 9', 'focus --workspace 9' ]
     bindings: [ 'alt+shift+9' ]
+

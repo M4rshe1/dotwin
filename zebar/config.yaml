@@ -1,7 +1,7 @@
 window/bar:
   providers: [ 'self' ]
   width: '{{ self.args.MONITOR_WIDTH }}'
-  height: '30'
+  height: '40'
   position_x: '{{ self.args.MONITOR_X }}'
   position_y: '{{ self.args.MONITOR_Y }}'
   z_order: 'normal'
@@ -12,11 +12,15 @@ window/bar:
     :root {
       --light_purple: #828dd1;
       --dark_purple: #6c77bb;
-      --surface0: #3b414d;
-      --crust: #2e3440;
+      --surface0: #3b414da0;
+      --surface0_content: #3b414d;
+      --crust: #2e3440b0;
       --yellow: #e5c890;
       --peach: #ef9f76;
       --blue: #8caaee;
+    }
+    * {
+    font-weight: bold;
     }
   styles: |
     display: grid;
@@ -29,6 +33,7 @@ window/bar:
     padding: 4px;
     border-bottom: 1px solid rgb(255 255 255 / 5%);;
     background: var(--crust);
+    backdrop-filter: blur(10px) opacity(0.8);
 
   group/left:
     styles: |
@@ -60,7 +65,7 @@ window/bar:
           &.focused,
           &:hover {
             background: var(--dark_purple);
-            color: var(--crust);
+            color: var(--surface0_content);
           }
         }
       providers: [ 'glazewm' ]
@@ -153,7 +158,7 @@ window/bar:
     template/clock:
       providers: [ 'date' ]
       template: |
-        {{ date.toFormat(date.now, 'EEE	d MMM t') }}
+        {{ date.toFormat(date.now, 'EEE, d. MMM yyyy, t') }}
 
   group/right:
     styles: |
@@ -208,6 +213,10 @@ window/bar:
         .network-icon i {
           color: #000000;
         }
+        .network-icon .wifi {
+          padding-right: 4px;
+          color: #000000;
+        }
         .network-speed {
           display: flex;
           align-items: center;
@@ -223,10 +232,10 @@ window/bar:
             @if (network.defaultInterface?.type === 'ethernet') {
               <i class="nf nf-md-ethernet"></i>
             } @else if (network.defaultInterface?.type === 'wifi') {
-              @if (network.defaultGateway?.signalStrength >= 80) {<i class="nf nf-md-wifi_strength_4"></i>}
-              @else if (network.defaultGateway?.signalStrength >= 65) {<i class="nf nf-md-wifi_strength_3"></i>}
-              @else if (network.defaultGateway?.signalStrength >= 40) {<i class="nf nf-md-wifi_strength_2"></i>}
-              @else if (network.defaultGateway?.signalStrength >= 25) {<i class="nf nf-md-wifi_strength_1"></i>}
+              @if (network.defaultGateway?.signalStrength >= 80) {<i class="nf nf-md-wifi_strength_4 wifi"></i>}
+              @else if (network.defaultGateway?.signalStrength >= 65) {<i class="nf nf-md-wifi_strength_3 wifi"></i>}
+              @else if (network.defaultGateway?.signalStrength >= 40) {<i class="nf nf-md-wifi_strength_2 wifi"></i>}
+              @else if (network.defaultGateway?.signalStrength >= 25) {<i class="nf nf-md-wifi_strength_1 wifi"></i>}
               @else {<i class="nf nf-md-wifi_strength_outline"></i>}
               {{ network.defaultGateway?.ssid }}
             } @else {
@@ -276,35 +285,36 @@ window/bar:
             {{ Math.round(battery.chargePercent) }}%
           </span>
         </div>
-    template/date:
-      providers: [ 'date' ]
-      styles: |
-        .calendar {
-            display: flex;
-            align-items: center;
-            color: #000000;
-        }
-        .nf-md-calendar {
-          border-radius: 2px 0 0 2px;
-          height: 22px;
-          margin: 0;
-          background: var(--light_purple);
-          padding: 4px 8px;
-          color: #000000;
-        }
-        .date {
-          display: flex;
-          align-items: center;
-          color: #000000;
-          height: 22px;
-          background: var(--dark_purple);
-          border-radius: 0 2px 2px 0;
-          padding: 4px 8px;
-        }
-      template: |
-        <div class="calendar">
-          <i class="nf nf-md-calendar"></i>
-        <span class="date">
-          {{ date.toFormat(date.now, 'HH:mm EEE DD.MM.yyyy') }}
-        </span>
-        </div>
+#    template/date:
+#      providers: [ 'date' ]
+#      styles: |
+#        .calendar {
+#            display: flex;
+#            align-items: center;
+#            color: #000000;
+#        }
+#        .nf-md-calendar {
+#          border-radius: 2px 0 0 2px;
+#          height: 22px;
+#          margin: 0;
+#          background: var(--light_purple);
+#          padding: 4px 8px;
+#          color: #000000;
+#        }
+#        .date {
+#          display: flex;
+#          align-items: center;
+#          color: #000000;
+#          height: 22px;
+#          background: var(--dark_purple);
+#          border-radius: 0 2px 2px 0;
+#          padding: 4px 8px;
+#        }
+#      template: |
+#        <div class="calendar">
+#          <i class="nf nf-md-calendar"></i>
+#        <span class="date">
+#          {{ date.toFormat(date.now, 'HH:mm EEE DD.MM.yyyy') }}
+#        </span>
+#        </div>
+
