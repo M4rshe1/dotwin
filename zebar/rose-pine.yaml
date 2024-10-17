@@ -13,6 +13,7 @@ window/bar:
   global_styles: |
     @import "https://www.nerdfonts.com/assets/css/webfont.css";
     @import "https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css";
+    @import "https://www.nerdfonts.com/assets/css/webfont.css";
 
     :root {
       --rp-base: #191724;
@@ -70,8 +71,8 @@ window/bar:
       --bg: var(--rp-base-alpha-bg);
       --border: var(--rp-base);
       --icon: var(--rp-love);
-      --memory: var(--rp-iris);
-      --cpu: var(--rp-rose);
+      --memory: var(--rp-gold);
+      --cpu: var(--rp-love);
       --cpu-high-usage: var(--rp-love);
       --battery-good: var(--rp-foam);
       --battery-mid: var(--rp-gold);
@@ -82,7 +83,7 @@ window/bar:
       --ws-4: var(--rp-pine);
       --ws-5: var(--rp-foam);
       --ws-6: var(--rp-iris);
-      --weather: var(--rp-gold);
+      --weather: var(--rp-foam);
     }
 
     @keyframes flash {
@@ -96,7 +97,7 @@ window/bar:
     grid-template-columns: 1fr 1fr 1fr;
     align-items: center;
     height: 40px;
-    margin: 10px 20px;
+    margin: 5px 10px;
     color: var(--text);
     font-family: "SF Mono", ui-monospace, monospace;
     font-size: 16px;
@@ -135,20 +136,27 @@ window/bar:
       }
 
     template/rose-pine:
+      providers: [ 'glazewm' ]
       styles: |
-        color: var(--icon);
-        background: color-mix(in srgb, currentColor 10%, transparent);
-        padding: 6px;
-        border-radius: 9999px
+        i {
+          color: var(--icon);
+          background: color-mix(in srgb, currentColor 10%, transparent);
+          padding: 6px;
+          border-radius: 9999px
+        }
+        
+        .vertical {
+          rotate: 90deg;
+        }
       template: |
-        <i class="nf nf-md-flower_tulip"></i>
+        <i class="nf nf-md-flower_tulip {{ glazewm.tilingDirection === 'vertical' ? '' : 'vertical'}}"></i>
 
     template/memory:
       providers: ["memory"]
       styles: |
         color: var(--memory);
       template: |
-        <i class="ti ti-rocket"></i>
+        <i class="ti ti-database"></i>
         {{ (memory.usedMemory / 1000000000).toFixed(2) }} GiB
 
     template/cpu:
@@ -194,7 +202,12 @@ window/bar:
               @default { critical }
             }
           ">
-            <i class="ti ti-bolt"></i>
+         @if (battery.isCharging) {<i class="ti ti-battery-charging"></i>}
+            @else if (battery.chargePercent > 90) {<i class="ti ti-battery-4"></i>}
+            @else if (battery.chargePercent > 70) {<i class="ti ti-battery-3"></i>}
+            @else if (battery.chargePercent > 40) {<i class="ti ti-battery-2"></i>}
+            @else if (battery.chargePercent > 20) {<i class="ti ti-battery-1"></i>}
+            @else {<i class="ti ti-battery-exclamation">}
             {{ Math.round(battery.chargePercent) }}%
         </div>
 
@@ -213,42 +226,67 @@ window/bar:
         font-weight: 1000;
 
         .workspace {
-          background:transparent;
           border: none;
           display: flex;
           align-items: center;
           justify-content: center;
-          padding: 4px;
+          background: transparent;
+        }
+        
+        .workspace span  {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 2px;
+          width: 22px;
+          height: 22px;
+          border-radius: 50%;
+          border: 3px solid;
+          font-weight: 1000;
+        }
+        
+        .workspace.notInFocus span {
+          background: var(--bg);
+        }
+        
+        .workspace.focused span {
+          color: var(--rp-base);
         }
 
-        i {
-          padding: 8px;
-          background: color-mix(in srgb, currentColor 10%, transparent);
-          border-radius: 9999px;
-        }      
-
-        button:nth-child(6n+1) i {
+        button:nth-child(6n+1) span {
           color: var(--ws-1);
+          border-color: var(--rp-love);
+          background: var(--rp-love);
         }
 
-        button:nth-child(6n+2) i {
+        button:nth-child(6n+2) span {
           color: var(--ws-2);
+          border-color: var(--rp-gold);
+          background: var(--rp-gold);
         }
 
-        button:nth-child(6n+3) i {
+        button:nth-child(6n+3) span {
           color: var(--ws-3);
+          border-color: var(--rp-rose);
+          background: var(--rp-rose);
         }
 
-        button:nth-child(6n+4) i {
+        button:nth-child(6n+4) span {
           color: var(--ws-4);
+          border-color: var(--rp-pine);
+          background: var(--rp-pine);
         }
 
-        button:nth-child(6n+5) i {
+        button:nth-child(6n+5) span {
           color: var(--ws-5);
+          border-color: var(--rp-foam);
+          background: var(--rp-foam);
         }
 
-        button:nth-child(6n+6) i {
+        button:nth-child(6n+6) span {
           color: var(--ws-6);
+          border-color: var(--rp-iris);
+          background: var(--rp-iris);
         }
 
       providers: ["glazewm"]
@@ -258,8 +296,8 @@ window/bar:
           selector: ".workspace"
       template: |
         @for (workspace of glazewm.currentWorkspaces) {
-          <button class="workspace" id="{{ workspace.name }}">
-            <i class="nf {{ workspace.hasFocus? 'nf-cod-circle_filled' : 'nf-cod-circle' }}"></i>
+          <button class="workspace {{ workspace.hasFocus ? 'focused' : 'notInFocus' }}" id="{{ workspace.name }}">
+            <span>{{ workspace.displayName ?? workspace.name }}</span>
           </button>
         }
 
@@ -279,7 +317,7 @@ window/bar:
         align-items: center;
       }
 
-      #weather {
+      #network {
         background: color-mix(in srgb, currentColor 10%, transparent);
         border-radius: 9999px;
         padding: 6px;
@@ -288,8 +326,8 @@ window/bar:
         }
       }
 
-    template/weather:
-      providers: ["weather"]
+    template/network:
+      providers: ["network", "util"]
       styles: |
         margin: 10px;
         i {
@@ -297,21 +335,19 @@ window/bar:
         }
         color: var(--weather);
       template: |
-        @switch (weather.status) {
-          @case ('clear_day') {<i class="nf nf-weather-day_sunny"></i>}
-          @case ('clear_night') {<i class="nf nf-weather-night_clear"></i>}
-          @case ('cloudy_day') {<i class="nf nf-weather-day_cloudy"></i>}
-          @case ('cloudy_night') {<i class="nf nf-weather-night_alt_cloudy"></i>}
-          @case ('light_rain_day') {<i class="nf nf-weather-day_sprinkle"></i>}
-          @case ('light_rain_night') {<i class="nf nf-weather-night_alt_sprinkle"></i>}
-          @case ('heavy_rain_day') {<i class="nf nf-weather-day_rain"></i>}
-          @case ('heavy_rain_night') {<i class="nf nf-weather-night_alt_rain"></i>}
-          @case ('snow_day') {<i class="nf nf-weather-day_snow"></i>}
-          @case ('snow_night') {<i class="nf nf-weather-night_alt_snow"></i>}
-          @case ('thunder_day') {<i class="nf nf-weather-day_lightning"></i>}
-          @case ('thunder_night') {<i class="nf nf-weather-night_alt_lightning"></i>}
-        }
-        {{ weather.celsiusTemp }}°
+        @if (network.defaultInterface?.type === 'ethernet' || network.interfaces.length !== 0 && network.interfaces[0].type == 'ethernet') {
+              <i class="ti ti-plug"></i>
+            } @else if (network.defaultInterface?.type === 'wifi' || network.interfaces.length !== 0 && network.interfaces[0].type == 'wifi') {
+              @if (network.defaultGateway?.signalStrength >= 80) {<i class="ti ti-antenna-bars-5 wifi"></i>}
+              @else if (network.defaultGateway?.signalStrength >= 65) {<i class="ti ti-antenna-bars-4 wifi"></i>}
+              @else if (network.defaultGateway?.signalStrength >= 40) {<i class="ti ti-antenna-bars-3 wifi"></i>}
+              @else if (network.defaultGateway?.signalStrength >= 25) {<i class="ti ti-antenna-bars-2 wifi"></i>}
+              @else {<i class="ti ti-antenna-bars-1 wifi"></i>}
+              {{ network.defaultGateway?.ssid }}
+            } @else {
+              <i class="ti ti-world-off"></i>
+            }
+        {{util.convertBytes(network.traffic.received, 0, 'si_bytes') }} | {{ util.convertBytes(network.traffic.transmitted, 0, 'si_bytes') }}
 
     template/separator:
       styles: |
@@ -323,4 +359,4 @@ window/bar:
       styles: |
         padding-right: 6px;
       template: |
-        {{ date.toFormat(date.now, 't') }}
+        {{ date.toFormat(date.now, 'EEE, d. MMM yyyy, t:s') }}

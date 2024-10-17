@@ -18,7 +18,7 @@ gaps:
   inner_gap: '2px'
 
   outer_gap:
-    top: '42px'
+    top: '50px'
     right: '2px'
     bottom: '2px'
     left: '2px'

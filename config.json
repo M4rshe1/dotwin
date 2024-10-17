@@ -36,7 +36,6 @@
       "local": "\"$env:LOCALAPPDATA\\Microsoft.WindowsTerminal_8wekyb3d8bbwe\\LocalState\\settings.json\"",
       "init_only": true
     }
-
   ],
   "software": [
     "dotPDN.PaintDotNet",
@@ -74,5 +73,70 @@
     "JohnMarcFerlane.Pandoc",
     "glzr-io.glazewm",
     "Mozilla.Firefox"
+  ],
+  "registry": [
+    [
+      {
+        "name": "Context menu",
+        "entries": [
+          {
+            "Path": "HKCR:\\*\\shell\\CompressToFullMenu_ForOldContextMenu",
+            "OriginalValue": "",
+            "Name": "CommandStateSync",
+            "Value": "",
+            "Type": "String"
+          },
+          {
+            "Path": "HKCR:\\*\\shell\\CompressToFullMenu_ForOldContextMenu",
+            "OriginalValue": "",
+            "Name": "ExplorerCommandHandler",
+            "Value": "{7AE6900F-6EB0-44A2-9CA1-DB2F7EF352AF}",
+            "Type": "String"
+          },
+          {
+            "Path": "HKCR:\\*\\shell\\CompressToFullMenu_ForOldContextMenu",
+            "OriginalValue": "",
+            "Name": "MUIVerb",
+            "Value": "@Windows.UI.FileExplorer.dll,-51797",
+            "Type": "String"
+          },
+          {
+            "Path": "HKCR:\\*\\shell\\CompressToFullMenu_ForOldContextMenu",
+            "OriginalValue": "",
+            "Name": "Note",
+            "Value": "Copied from original Command Store command: Windows.CompressTo",
+            "Type": "String"
+          },
+          {
+            "Path": "HKCR:\\Folder\\shell\\CompressToFullMenu_ForOldContextMenu",
+            "OriginalValue": "",
+            "Name": "CommandStateSync",
+            "Value": "",
+            "Type": "String"
+          },
+          {
+            "Path": "HKCR:\\Folder\\shell\\CompressToFullMenu_ForOldContextMenu",
+            "OriginalValue": "",
+            "Name": "ExplorerCommandHandler",
+            "Value": "{7AE6900F-6EB0-44A2-9CA1-DB2F7EF352AF}",
+            "Type": "String"
+          },
+          {
+            "Path": "HKCR:\\Folder\\shell\\CompressToFullMenu_ForOldContextMenu",
+            "OriginalValue": "",
+            "Name": "MUIVerb",
+            "Value": "@Windows.UI.FileExplorer.dll,-51797",
+            "Type": "String"
+          },
+          {
+            "Path": "HKCR:\\Folder\\shell\\CompressToFullMenu_ForOldContextMenu",
+            "OriginalValue": "",
+            "Name": "Note",
+            "Value": "Copied from original Command Store command: Windows.CompressTo",
+            "Type": "String"
+          }
+        ]
+      }
+    ]
   ]
 }
