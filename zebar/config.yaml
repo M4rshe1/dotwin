@@ -74,7 +74,7 @@ window/bar:
       --memory: var(--rp-gold);
       --cpu: var(--rp-rose);
       --cpu-high-usage: var(--rp-love);
-      --battery-good: var(--rp-foam);
+      --battery-good: var(--rp-pine);
       --battery-mid: var(--rp-gold);
       --battery-low: var(--rp-love);
       --ws-1: var(--rp-love);
