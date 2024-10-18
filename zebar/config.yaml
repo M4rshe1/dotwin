@@ -253,37 +253,37 @@ window/bar:
           color: var(--rp-base);
         }
 
-        button span:has-text("1") {
+        .workspace-1 span {
           color: var(--ws-1);
           border-color: var(--rp-love);
           background: var(--rp-love);
         }
 
-        button span:has-text("2") {
+        .workspace-2 span {
           color: var(--ws-2);
           border-color: var(--rp-gold);
           background: var(--rp-gold);
         }
 
-        button span:has-text("3") {
+        .workspace-3 span {
           color: var(--ws-3);
           border-color: var(--rp-rose);
           background: var(--rp-rose);
         }
 
-        button span:has-text("4") {
+        .workspace-4 span {
           color: var(--ws-4);
           border-color: var(--rp-pine);
           background: var(--rp-pine);
         }
 
-        button span:has-text("5") {
+        .workspace-5 span {
           color: var(--ws-5);
           border-color: var(--rp-foam);
           background: var(--rp-foam);
         }
 
-        button span:has-text("6") {
+        .workspace-6 span {
           color: var(--ws-6);
           border-color: var(--rp-iris);
           background: var(--rp-iris);
@@ -296,7 +296,7 @@ window/bar:
           selector: ".workspace"
       template: |
         @for (workspace of glazewm.currentWorkspaces) {
-          <button class="workspace {{ workspace.hasFocus ? 'focused' : 'notInFocus' }}" id="{{ workspace.name }}">
+          <button class="workspace {{ workspace.hasFocus ? 'focused' : 'notInFocus' }} workspace-{{ workspace.name }}" id="{{ workspace.name }}">
             <span>{{ workspace.displayName ?? workspace.name }}</span>
           </button>
         }
