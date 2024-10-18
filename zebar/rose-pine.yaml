@@ -13,7 +13,6 @@ window/bar:
   global_styles: |
     @import "https://www.nerdfonts.com/assets/css/webfont.css";
     @import "https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css";
-    @import "https://www.nerdfonts.com/assets/css/webfont.css";
 
     :root {
       --rp-base: #191724;
@@ -72,9 +71,9 @@ window/bar:
       --border: var(--rp-base);
       --icon: var(--rp-love);
       --memory: var(--rp-gold);
-      --cpu: var(--rp-love);
+      --cpu: var(--rp-rose);
       --cpu-high-usage: var(--rp-love);
-      --battery-good: var(--rp-foam);
+      --battery-good: var(--rp-pine);
       --battery-mid: var(--rp-gold);
       --battery-low: var(--rp-love);
       --ws-1: var(--rp-love);
@@ -253,37 +252,37 @@ window/bar:
           color: var(--rp-base);
         }
 
-        button:nth-child(6n+1) span {
+        .workspace-1 span {
           color: var(--ws-1);
           border-color: var(--rp-love);
           background: var(--rp-love);
         }
 
-        button:nth-child(6n+2) span {
+        .workspace-2 span {
           color: var(--ws-2);
           border-color: var(--rp-gold);
           background: var(--rp-gold);
         }
 
-        button:nth-child(6n+3) span {
+        .workspace-3 span {
           color: var(--ws-3);
           border-color: var(--rp-rose);
           background: var(--rp-rose);
         }
 
-        button:nth-child(6n+4) span {
+        .workspace-4 span {
           color: var(--ws-4);
           border-color: var(--rp-pine);
           background: var(--rp-pine);
         }
 
-        button:nth-child(6n+5) span {
+        .workspace-5 span {
           color: var(--ws-5);
           border-color: var(--rp-foam);
           background: var(--rp-foam);
         }
 
-        button:nth-child(6n+6) span {
+        .workspace-6 span {
           color: var(--ws-6);
           border-color: var(--rp-iris);
           background: var(--rp-iris);
@@ -296,7 +295,7 @@ window/bar:
           selector: ".workspace"
       template: |
         @for (workspace of glazewm.currentWorkspaces) {
-          <button class="workspace {{ workspace.hasFocus ? 'focused' : 'notInFocus' }}" id="{{ workspace.name }}">
+          <button class="workspace {{ workspace.hasFocus ? 'focused' : 'notInFocus' }} workspace-{{ workspace.name }}" id="{{ workspace.name }}">
             <span>{{ workspace.displayName ?? workspace.name }}</span>
           </button>
         }

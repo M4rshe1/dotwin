@@ -13,7 +13,6 @@ window/bar:
   global_styles: |
     @import "https://www.nerdfonts.com/assets/css/webfont.css";
     @import "https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css";
-    @import "https://www.nerdfonts.com/assets/css/webfont.css";
 
     :root {
       --rp-base: #191724;
@@ -80,7 +79,7 @@ window/bar:
       --ws-1: var(--rp-love);
       --ws-2: var(--rp-gold);
       --ws-3: var(--rp-rose);
-      --ws-4: var(--rp-pine);
+      --ws-4: var(--rp-foam);
       --ws-5: var(--rp-foam);
       --ws-6: var(--rp-iris);
       --weather: var(--rp-foam);
