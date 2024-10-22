@@ -1,6 +1,6 @@
 try
 {
-    $request = [System.Net.HttpWebRequest]::Create("http://github.com")
+    $request = [System.Net.HttpWebRequest]::Create("https://github.com")
     $request.Timeout = 500
     $response = $request.GetResponse()
     $response.Close()
@@ -232,29 +232,18 @@ function fif
         [string] $SearchString,
         [string] $path = $PWD
     )
-
-    # Get all files recursively from the current directory
     $files = Get-ChildItem -Path $path -Recurse -File
-
-    # Array to store results
     $results = @()
-
     foreach ($file in $files)
     {
         try
         {
-            # Read the content of the file
             $content = Get-Content -Path $file.FullName -Raw -ErrorAction Stop
-
-            # Split content into lines
-            $lines = $content -split "`r`n"  # Split by newline (handles Windows format)
-
-            # Iterate through each line to find the search string
+            $lines = $content -split "`r`n"
             for ($i = 0; $i -lt $lines.Count; $i++) {
                 if ($lines[$i] -match $SearchString)
                 {
-                    # Build the result string: "file_path:line_number"
-                    $result = "{0}:{1}" -f $file.FullName, ($i + 1)  # Line numbers are 1-based
+                    $result = "{0}:{1}" -f $file.FullName, ($i + 1)
                     $results += $result
                 }
             }
@@ -264,8 +253,6 @@ function fif
             Write-Warning "Error reading file: $( $file.FullName )"
         }
     }
-
-    # Output the results
     $results
 }
 
@@ -281,6 +268,25 @@ function cbcp
 function cbpt
 {
     Get-Clipboard
+}
+
+function unique
+{
+    param (
+        [Parameter(ValueFromPipeline = $true)]
+        [string]$InputString
+    )
+    begin {
+        $uniqueLines = @{ }
+    }
+    process {
+        $trimmedLine = $InputString.Trim()
+        if (-not $uniqueLines.ContainsKey($trimmedLine))
+        {
+            $uniqueLines[$trimmedLine] = $true
+            $trimmedLine
+        }
+    }
 }
 
 
@@ -303,37 +309,43 @@ else
     }
 }
 
-function Update-Config ($isInit) {
+function Update-Config($isInit)
+{
     $config = Invoke-RestMethod "https://raw.githubusercontent.com/M4rshe1/pwsh/master//config.json"
     $config.config_files | ForEach-Object {
         if ($_.init_only -and -not $isInit)
         {
-            Write-Host "Ignoring $($_.name)..." -ForegroundColor Yellow
+            Write-Host "Ignoring $( $_.name )..." -ForegroundColor Yellow
             return
         }
-        Write-Host "Updating $($_.name)..." -ForegroundColor Green
-        Invoke-RestMethod  $_.url | Out-File $($_.local | iex) -Force
+        Write-Host "Updating $( $_.name )..." -ForegroundColor Green
+        Invoke-RestMethod  $_.url | Out-File $( $_.local | iex ) -Force
+    }
+}
+if ($global:canConnectToGitHub)
+{
+    try
+    {
+        $url = "https://raw.githubusercontent.com/M4rshe1/dotwin/master/ohmyposh/theme.omp.json"
+        $oldhash = Get-FileHash "$env:USERPROFILE/theme.omp.json"
+        Invoke-RestMethod $url -OutFile "$env:temp/theme.omp.json"
+        $newhash = Get-FileHash "$env:temp/theme.omp.json"
+        Copy-Item -Path "$env:temp/theme.omp.json" -Destination "$env:USERPROFILE/theme.omp.json" -Force
+    }
+    catch
+    {
+        Write-Error "Unable to check for oh-my-posh theme updates"
     }
 }
 
-try
-{
-    $url = "https://raw.githubusercontent.com/M4rshe1/dotwin/master/ohmyposh/theme.omp.json"
-    $oldhash = Get-FileHash "$env:USERPROFILE/theme.omp.json"
-    Invoke-RestMethod $url -OutFile "$env:temp/theme.omp.json"
-    $newhash = Get-FileHash "$env:temp/theme.omp.json"
-    Copy-Item -Path "$env:temp/theme.omp.json" -Destination "$env:USERPROFILE/theme.omp.json" -Force
-}
-catch
-{
-    Write-Error "Unable to check for oh-my-posh theme updates"
-}
 
 if (Get-Command oh-my-posh -ErrorAction SilentlyContinue)
 {
 
     oh-my-posh init pwsh --config "$env:USERPROFILE/theme.omp.json" | Invoke-Expression
-} else {
+}
+else
+{
     Write-Host "oh-my-posh command not found. Attempting to install via winget..."
     try
     {
