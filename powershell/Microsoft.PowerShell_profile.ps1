@@ -108,8 +108,7 @@ function sha256
     Write-Host $hash.Hash
 }
 
-function grep
-{
+function grep {
     param (
         [string] $regex = $( throw "Please provide a regex to search for" ),
         [Parameter(ValueFromPipeline = $true)]
@@ -121,24 +120,28 @@ function grep
     }
     process {
         $content -split "`r`n" | ForEach-Object {
-            if ($caseSensitive)
-            {
-                if ($_ -match $regex)
-                {
-                    Write-Host "$( $_ ):$lineNumber"
-                }
+            $line = $_
+            $lineMatches = if ($caseSensitive) {
+                [regex]::Matches($line, $regex)
+            } else {
+                [regex]::Matches($line, $regex, [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
             }
-            else
-            {
-                if ($_ -imatch $regex)
-                {
-                    Write-Host "$( $_ ):$lineNumber"
+
+            if ($lineMatches.Count -gt 0) {
+                $lastIndex = 0
+                foreach ($match in $lineMatches) {
+                    Write-Host ($line.Substring($lastIndex, $match.Index - $lastIndex)) -NoNewline
+                    Write-Host ($match.Value) -ForegroundColor Red -NoNewline
+                    $lastIndex = $match.Index + $match.Length
                 }
+                Write-Host ($line.Substring($lastIndex)) -NoNewline
+                Write-Host ":$lineNumber" -ForegroundColor Yellow
             }
             $lineNumber++
         }
     }
 }
+
 
 function unzip()
 {
