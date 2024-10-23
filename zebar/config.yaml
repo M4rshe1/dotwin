@@ -218,18 +218,21 @@ window/bar:
       styles: |
         height: 40px;
         display: flex;
+        gap: 4px;
         align-items: center;
         background: var(--bg);
         border: 1px solid var(--border);
         border-radius: 9999px;
         font-weight: 1000;
+        padding: 2px;
 
         .workspace {
           border: none;
+          border-radius: 9999px;
           display: flex;
           align-items: center;
           justify-content: center;
-          background: transparent;
+          padding: 6px;
         }
         
         .workspace span  {
@@ -245,47 +248,65 @@ window/bar:
         }
         
         .workspace.notInFocus span {
-          background: var(--bg);
+          background: transparent;
         }
         
         .workspace.focused span {
           color: var(--rp-base);
         }
-
-        .workspace-1 span {
-          color: var(--ws-1);
-          border-color: var(--rp-love);
-          background: var(--rp-love);
+        
+        .workspace-1, .workspace-7 {
+          background: color-mix(in srgb, var(--rp-love) 10%, transparent);
+          span {
+            color: var(--ws-1);
+            border-color: var(--rp-love);
+            background: var(--rp-love);
+          }
         }
 
-        .workspace-2 span {
-          color: var(--ws-2);
-          border-color: var(--rp-gold);
-          background: var(--rp-gold);
+        .workspace-2, .workspace-8 { 
+          background: color-mix(in srgb, var(--rp-gold) 10%, transparent);
+          span {
+            color: var(--ws-2);
+            border-color: var(--rp-gold);
+            background: var(--rp-gold);
+          }
         }
 
-        .workspace-3 span {
-          color: var(--ws-3);
-          border-color: var(--rp-rose);
-          background: var(--rp-rose);
+        .workspace-3, .workspace-9 {
+          background: color-mix(in srgb, var(--rp-rose) 10%, transparent);
+          span {
+            color: var(--ws-3);
+            border-color: var(--rp-rose);
+            background: var(--rp-rose);
+          }
         }
 
-        .workspace-4 span {
-          color: var(--ws-4);
-          border-color: var(--rp-pine);
-          background: var(--rp-pine);
+        .workspace-4 {
+          background: color-mix(in srgb, var(--rp-pine) 10%, transparent);
+          span {
+            color: var(--ws-4);
+            border-color: var(--rp-pine);
+            background: var(--rp-pine);
+          }
         }
 
-        .workspace-5 span {
-          color: var(--ws-5);
-          border-color: var(--rp-foam);
-          background: var(--rp-foam);
+        .workspace-5 {
+          background: color-mix(in srgb, var(--rp-foam) 10%, transparent);
+          span {
+            color: var(--ws-5);
+            border-color: var(--rp-foam);
+            background: var(--rp-foam);
+          }
         }
 
-        .workspace-6 span {
-          color: var(--ws-6);
-          border-color: var(--rp-iris);
-          background: var(--rp-iris);
+        .workspace-6 {
+          background: color-mix(in srgb, var(--rp-iris) 10%, transparent);
+          span {
+            color: var(--ws-6);
+            border-color: var(--rp-iris);
+            background: var(--rp-iris);
+          }
         }
 
       providers: ["glazewm"]
@@ -360,3 +381,4 @@ window/bar:
         padding-right: 6px;
       template: |
         {{ date.toFormat(date.now, 'EEE, d. MMM yyyy, t:ss') }}
+
