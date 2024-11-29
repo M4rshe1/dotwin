@@ -221,7 +221,7 @@ function rmrf($path)
 
 function Kill-Port($port)
 {
-    $process = Get-Process -Id (Get-NetTCPConnection -LocalPort 3000).OwningProcess -ErrorAction SilentlyContinue
+    $process = Get-Process -Id (Get-NetTCPConnection -LocalPort $port).OwningProcess -ErrorAction SilentlyContinue
     $process
     if ($null -ne $process)
     {
