@@ -207,7 +207,7 @@ function ll
 function mkcd($name)
 {
     mkdir $name
-    cd $name
+    Set-Location $name
 }
 
 function rmrf($path)
@@ -216,6 +216,20 @@ function rmrf($path)
     if ($confirm -eq "y")
     {
         Remove-Item $path -Recurse -Force
+    }
+}
+
+function Kill-Port($port)
+{
+    $process = Get-Process -Id (Get-NetTCPConnection -LocalPort 3000).OwningProcess -ErrorAction SilentlyContinue
+    $process
+    if ($null -ne $process)
+    {
+        $process | Stop-Process -Force
+    }
+    else
+    {
+        Write-Host "No process found on port $port" -ForegroundColor Yellow
     }
 }
 
