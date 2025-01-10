@@ -1,7 +1,7 @@
 try
 {
     $request = [System.Net.HttpWebRequest]::Create("https://github.com")
-    $request.Timeout = 500
+    $request.Timeout = 250
     $response = $request.GetResponse()
     $response.Close()
     $canConnectToGitHub = $true
@@ -68,7 +68,17 @@ function Update-Profile
 }
 Update-Profile
 
-Set-PSReadLineOption -PredictionSource History -PredictionViewStyle ListView
+$PSReadLineOptions = @{
+    EditMode = 'Windows'
+    HistoryNoDuplicates = $true
+    HistorySearchCursorMovesToEnd = $true
+    PredictionSource = 'History'
+    PredictionViewStyle = 'ListView'
+    BellStyle = 'None'
+}
+Set-PSReadLineOption @PSReadLineOptions
+Set-PSReadLineOption -PredictionSource HistoryAndPlugin
+Set-PSReadLineOption -MaximumHistoryCount 10000
 
 function e
 {
@@ -80,12 +90,12 @@ function e
 
 function Add-SSHKey
 {
-    irm "https://raw.githubusercontent.com/M4rshe1/tups1s/master/USB/Scripts/remote/add-ssh-key.ps1" | iex
+    Invoke-RestMethod "https://raw.githubusercontent.com/M4rshe1/tups1s/master/USB/Scripts/remote/add-ssh-key.ps1" | Invoke-Expression
 }
 
 function ctt
 {
-    irm christitus.com/win | iex
+    Invoke-RestMethod christitus.com/win | Invoke-Expression
 }
 
 # Network Utilities
@@ -273,7 +283,52 @@ function fif
     $results
 }
 
-function cbcp
+function admin {
+    if ($args.Count -gt 0) {
+        $argList = $args -join ' '
+        Start-Process wt -Verb runAs -ArgumentList "pwsh.exe -NoExit -Command $argList"
+    } else {
+        Start-Process wt -Verb runAs
+    }
+}
+
+Set-Alias -Name sudo -Value admin
+
+function gs { git status }
+
+function ga { git add . }
+
+function gc { git commit -m "$args" }
+
+function gp { git push }
+
+function gcl { git clone "$args" }
+
+function gcm {
+    git add .
+    git commit -m "$args"
+}
+
+function lg {
+    git add .
+    git commit -m "$args"
+    git push
+}
+
+function gpl { git pull }
+
+function gf { git fetch }
+
+function gr { git remote -v }
+
+function grr { git remote remove "$args" }
+
+function gra { git remote add "$args" }
+
+function gco { git checkout "$args" }
+
+
+function cpy
 {
     param (
         [Parameter(ValueFromPipeline = $true, Mandatory = $true)]
@@ -282,7 +337,7 @@ function cbcp
     Set-Clipboard -Value $content
 }
 
-function cbpt
+function pst
 {
     Get-Clipboard
 }
@@ -336,9 +391,10 @@ function Update-Config($isInit)
             return
         }
         Write-Host "Updating $( $_.name )..." -ForegroundColor Green
-        Invoke-RestMethod  $_.url | Out-File $( $_.local | iex ) -Force
+        Invoke-RestMethod  $_.url | Out-File $( $_.local | Invoke-Expression ) -Force
     }
 }
+
 if ($global:canConnectToGitHub)
 {
     try
