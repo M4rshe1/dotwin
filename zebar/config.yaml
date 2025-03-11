@@ -380,5 +380,5 @@ window/bar:
       styles: |
         padding-right: 6px;
       template: |
-        {{ date.toFormat(date.now, 'EEE, d. MMM yyyy, t:ss') }}
+        {{ date.toFormat(date.now, 'EEE, d. MMM yyyy, HH:mm:ss') }}
 
