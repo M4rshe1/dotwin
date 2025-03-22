@@ -354,8 +354,8 @@ function gcm {
     git commit -m "$args"
 }
 
-
 function lg {
+    git status
     git add .
     git commit -m "$args"
     git push
