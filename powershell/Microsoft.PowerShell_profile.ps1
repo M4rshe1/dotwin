@@ -93,56 +93,61 @@ function ctt
     Invoke-RestMethod christitus.com/win | Invoke-Expression
 }
 
-function Import {
-    param (
-        [string]$RepoBranchFile,  
-        [string[]]$Functions = @() 
-    )
+#function Import {
+#    param (
+#        [string]$RepoBranchFile,
+#        [string[]]$Functions = @()
+#    )
+#
+#    if ($RepoBranchFile -match "^(https?://)?([^@]+)@([^/]+)/(.+)$") {
+#        $Repository = $matches[2] -replace "github.com", "raw.githubusercontent.com"
+#        $Branch = $matches[3]
+#        $FilePath = $matches[4]
+#    } else {
+#        Write-Error "Invalid format. Use 'github.com/user/repo@branch/filepath'."
+#        return
+#    }
+#
+#    $RawUrl = "https://$Repository/refs/heads/$Branch/$FilePath"
+#    $RawUrl
+#    try {
+#        $ScriptContent = Invoke-RestMethod -Uri $RawUrl -ErrorAction Stop
+#
+#        Invoke-Expression -Command $ScriptContent
+#
+#        if (-not $Functions) {
+#            $Functions = @()
+#            if ($ScriptContent -match 'function\s+([\w-]+)') {
+#                $Matches = $ScriptContent | Select-String -Pattern 'function\s+([\w-]+)' -AllMatches
+#                foreach ($Match in $Matches.Matches) {
+#                    $Functions += $Match.Groups[1].Value
+#                }
+#            }
+#        }
+#
+#        foreach ($FunctionName in $Functions) {
+#            $Function = Get-Command -Name $FunctionName -CommandType Function -ErrorAction SilentlyContinue
+#            if ($Function) {
+#                Set-Item -Path "Function:\$FunctionName" -Value $Function.ScriptBlock
+#            } else {
+#                Write-Warning "Function '$FunctionName' was not found in the imported script."
+#            }
+#        }
+#
+#        Write-Output "Successfully imported: $($Functions -join ', ')"
+#    } catch {
+#        Write-Error "Failed to import the module: $_"
+#    }
+#}
 
-    if ($RepoBranchFile -match "^(https?://)?([^@]+)@([^/]+)/(.+)$") {
-        $Repository = $matches[2] -replace "github.com", "raw.githubusercontent.com"
-        $Branch = $matches[3]
-        $FilePath = $matches[4]
-    } else {
-        Write-Error "Invalid format. Use 'github.com/user/repo@branch/filepath'."
-        return
-    }
+#Import "github.com/M4rshe1/powershell-snippets@main/string/ConvertTo-CamelCase.ps1"
+#
+#ConvertTo-CamelCase "Hello World"
 
-    $RawUrl = "https://$Repository/refs/heads/$Branch/$FilePath"
-    $RawUrl
-    try {
-        $ScriptContent = Invoke-RestMethod -Uri $RawUrl -ErrorAction Stop
-
-        Invoke-Expression -Command $ScriptContent
-
-        if (-not $Functions) {
-            $Functions = @()
-            if ($ScriptContent -match 'function\s+([\w-]+)') {
-                $Matches = $ScriptContent | Select-String -Pattern 'function\s+([\w-]+)' -AllMatches
-                foreach ($Match in $Matches.Matches) {
-                    $Functions += $Match.Groups[1].Value
-                }
-            }
-        }
-
-        foreach ($FunctionName in $Functions) {
-            $Function = Get-Command -Name $FunctionName -CommandType Function -ErrorAction SilentlyContinue
-            if ($Function) {
-                Set-Item -Path "Function:\$FunctionName" -Value $Function.ScriptBlock
-            } else {
-                Write-Warning "Function '$FunctionName' was not found in the imported script."
-            }
-        }
-
-        Write-Output "Successfully imported: $($Functions -join ', ')"
-    } catch {
-        Write-Error "Failed to import the module: $_"
-    }
+function Add-SSHKey
+{
+    Invoke-RestMethod "https://raw.githubusercontent.com/M4rshe1/tups1s/master/USB/Scripts/remote/add-ssh-key.ps1" | Invoke-Expression
 }
-
-Import "github.com/M4rshe1/powershell-snippets@main/string/ConvertTo-CamelCase.ps1"
-
-ConvertTo-CamelCase "Hello World"
 
 function Get-PubIP
 {
