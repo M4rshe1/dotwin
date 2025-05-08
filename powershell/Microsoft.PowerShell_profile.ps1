@@ -293,10 +293,34 @@ function Kill-Port($port)
     }
 }
 
-function ff($name)
-{
+function ff {
+    param(
+        [Parameter(Mandatory=$true)]
+        [string]$name,
+
+        [switch]$CaseSensitive
+    )
+
+    $HighlightColor = "`e[33m"
+    $ResetColor = "`e[0m"
+
+    $regexOptions = [System.Text.RegularExpressions.RegexOptions]::None
+    if (-not $CaseSensitive) {
+        $regexOptions = [System.Text.RegularExpressions.RegexOptions]::IgnoreCase
+    }
+
     Get-ChildItem -recurse -filter "*${name}*" -ErrorAction SilentlyContinue | ForEach-Object {
-        Write-Output "$( $_ )"
+        $fullPath = $_.FullName
+        $highlightedPath = $fullPath
+
+        $pattern = [regex]::Escape($name)
+        $regex = New-Object regex $pattern, $regexOptions
+
+        $highlightedPath = $regex.Replace($fullPath, "$($HighlightColor)$& $($ResetColor)")
+
+        if ($highlightedPath -ne $fullPath) {
+            Write-Output $highlightedPath
+        }
     }
 }
 
