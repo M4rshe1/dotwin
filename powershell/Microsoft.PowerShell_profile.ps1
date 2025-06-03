@@ -93,61 +93,68 @@ function ctt
     Invoke-RestMethod christitus.com/win | Invoke-Expression
 }
 
-#function Import {
-#    param (
-#        [string]$RepoBranchFile,
-#        [string[]]$Functions = @()
-#    )
-#
-#    if ($RepoBranchFile -match "^(https?://)?([^@]+)@([^/]+)/(.+)$") {
-#        $Repository = $matches[2] -replace "github.com", "raw.githubusercontent.com"
-#        $Branch = $matches[3]
-#        $FilePath = $matches[4]
-#    } else {
-#        Write-Error "Invalid format. Use 'github.com/user/repo@branch/filepath'."
-#        return
-#    }
-#
-#    $RawUrl = "https://$Repository/refs/heads/$Branch/$FilePath"
-#    $RawUrl
-#    try {
-#        $ScriptContent = Invoke-RestMethod -Uri $RawUrl -ErrorAction Stop
-#
-#        Invoke-Expression -Command $ScriptContent
-#
-#        if (-not $Functions) {
-#            $Functions = @()
-#            if ($ScriptContent -match 'function\s+([\w-]+)') {
-#                $Matches = $ScriptContent | Select-String -Pattern 'function\s+([\w-]+)' -AllMatches
-#                foreach ($Match in $Matches.Matches) {
-#                    $Functions += $Match.Groups[1].Value
-#                }
-#            }
-#        }
-#
-#        foreach ($FunctionName in $Functions) {
-#            $Function = Get-Command -Name $FunctionName -CommandType Function -ErrorAction SilentlyContinue
-#            if ($Function) {
-#                Set-Item -Path "Function:\$FunctionName" -Value $Function.ScriptBlock
-#            } else {
-#                Write-Warning "Function '$FunctionName' was not found in the imported script."
-#            }
-#        }
-#
-#        Write-Output "Successfully imported: $($Functions -join ', ')"
-#    } catch {
-#        Write-Error "Failed to import the module: $_"
-#    }
-#}
+function Add-SshKey {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)]
+        [string]$Target
+    )
 
-#Import "github.com/M4rshe1/powershell-snippets@main/string/ConvertTo-CamelCase.ps1"
-#
-#ConvertTo-CamelCase "Hello World"
+    function Generate-SshKey {
+        $currentUser = (whoami).Split('\')[1]
+        $pcName = $env:COMPUTERNAME
+        $comment = "$currentUser@$pcName"
+        $outputPath = "$HOME/.ssh/id_rsa"
 
-function Add-SSHKey
-{
-    Invoke-RestMethod "https://raw.githubusercontent.com/M4rshe1/tups1s/master/USB/Scripts/remote/add-ssh-key.ps1" | Invoke-Expression
+        ssh-keygen -t rsa -b 4096 -C "$comment" -f "$outputPath" -N ""
+        Write-Host "SSH key generated at $outputPath"
+    }
+
+    # Corrected: Provide a single array of characters as delimiters
+    $parts = $Target.Split([char[]]('@', ':'))
+
+
+    if ($parts.Length -lt 2 -or $parts.Length -gt 3) {
+        Write-Error "Invalid target format. Expected user@hostname or user@hostname:port."
+        return
+    }
+
+    $user = $parts[0]
+    $hostname = $parts[1]
+    $port = 22
+
+    if ($parts.Length -eq 3) {
+        # Ensure the port part is indeed a number
+        if ($parts[2] -match '^\d+$') {
+            $port = [int]$parts[2]
+        }
+        else {
+            Write-Error "Invalid port format. Port must be a number."
+            return
+        }
+    }
+
+    $sshKeyPath = "$HOME/.ssh/id_rsa.pub"
+
+    if (!(Test-Path $sshKeyPath)) {
+        Write-Warning "No SSH key found at $sshKeyPath. Generating one now..."
+        Generate-SshKey
+    }
+
+    $sshKeyContent = Get-Content $sshKeyPath -Raw
+
+    Write-Host "Adding SSH key to $user@$hostname via port $port..."
+
+    try {
+        $remoteCommand = "mkdir -p ~/.ssh && echo `"$sshKeyContent`" >> ~/.ssh/authorized_keys"
+        ssh "$user@$hostname" -p $port $remoteCommand
+        Write-Host "SSH key successfully added to $user@$hostname."
+    }
+    catch {
+        Write-Error "Failed to add SSH key: $($_.Exception.Message)"
+    }
 }
+
 
 function Get-PubIP
 {
@@ -435,7 +442,6 @@ function unique
     }
 }
 
-
 if (Get-Command zoxide -ErrorAction SilentlyContinue)
 {
     Invoke-Expression (& { (zoxide init powershell | Out-String) })
@@ -457,7 +463,7 @@ else
 
 function Update-Config($isInit)
 {
-    $config = Invoke-RestMethod "https://raw.githubusercontent.com/M4rshe1/pwsh/master//config.json"
+    $config = Invoke-RestMethod "https://raw.githubusercontent.com/M4rshe1/pwsh/master/config.json"
     $config.config_files | ForEach-Object {
         if ($_.init_only -and -not $isInit)
         {
