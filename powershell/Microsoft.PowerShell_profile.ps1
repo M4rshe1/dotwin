@@ -390,6 +390,10 @@ function gcm {
     git commit -m "$args"
 }
 
+function grc {
+    git rm --cached "$args"
+}
+
 function lg {
     git status
     git add .
