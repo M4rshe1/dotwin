@@ -180,6 +180,7 @@ window/bar:
         
         .memory-text {
           opacity: 0;
+          pointer-events: none;
           position: absolute;
           transform: translateY(-24px);
           transition: opacity 0.3s ease;
@@ -245,6 +246,7 @@ window/bar:
         
         .cpu-text {
           opacity: 0;
+          pointer-events: none;
           position: absolute;
           transform: translateY(-24px);
           transition: opacity 0.3s ease;
@@ -314,6 +316,7 @@ window/bar:
         
         .battery-text {
           opacity: 0;
+          pointer-events: none;
           position: absolute;
           transform: translateY(-24px);
           transition: opacity 0.3s ease;
