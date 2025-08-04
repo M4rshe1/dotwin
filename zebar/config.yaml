@@ -2,7 +2,7 @@ global:
   enable_devtools: true
 
 window/bar:
-  providers: ["self"]
+  providers: [ "self" ]
   width: "{{ self.args.MONITOR_WIDTH }}"
   height: "60" #This one is a bit funky, if you are using scaling, adjust accordingly
   position_x: "{{ self.args.MONITOR_X }}"
@@ -151,47 +151,186 @@ window/bar:
         <i class="nf nf-md-flower_tulip {{ glazewm.tilingDirection === 'vertical' ? '' : 'vertical'}}"></i>
 
     template/memory:
-      providers: ["memory"]
+      providers: [ "memory" ]
       styles: |
         color: var(--memory);
+        position: relative;
+        .memory-bar {
+          width: 50px;
+          height: 8px;
+          background: color-mix(in srgb, var(--memory) 20%, transparent);
+          border-radius: 4px;
+          margin-left: 2px;
+          position: relative;
+          margin-right: 6px;
+          transition: all 0.3s ease;
+        }
+        
+        .memory-bar::after {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 0;
+          height: 100%;
+          background: var(--memory);
+          border-radius: 2px;
+          width: {{ (memory.usedMemory / memory.totalMemory * 100) }}%;
+          transition: all 0.3s ease;
+        }
+        
+        .memory-text {
+          opacity: 0;
+          position: absolute;
+          transform: translateY(-24px);
+          transition: opacity 0.3s ease;
+          left: 32px;
+        }
+        
+        &:hover .memory-bar {
+          transform: translateY(24px);
+          opacity: 0;
+        }
+        
+        &:hover .memory-text {
+          opacity: 1;
+          transform: translateY(0px);
+        }
+        
+        overflow: hidden;
       template: |
         <i class="ti ti-database"></i>
-        {{ (memory.usedMemory / 1000000000).toFixed(2) }} GiB
+        <div class="memory-bar"></div>
+        <span class="memory-text">{{ (memory.usedMemory / 1000000000).toFixed(0) }}GB</span>
 
     template/cpu:
-      providers: ["cpu"]
+      providers: [ "cpu" ]
       styles: |
         color: var(--cpu);
-
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        
         .high-usage {
           color: var(--cpu-high-usage);
           animation: flash 0.5s infinite;
         }
+        
+        .cpu-bar {
+          width: 50px;
+          height: 8px;
+          background: color-mix(in srgb, var(--cpu) 20%, transparent);
+          border-radius: 4px;
+          margin-left: 2px;
+          margin-right: 6px;
+          position: relative;
+          transition: all 0.3s ease;
+        }
+        
+        .cpu-bar::after {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 0;
+          height: 100%;
+          background: var(--cpu);
+          border-radius: 2px;
+          width: {{ cpu.usage }}%;
+          transition: all 0.3s ease;
+        }
+        
+        .cpu-bar.high-usage::after {
+          background: var(--cpu-high-usage);
+          animation: flash 0.5s infinite;
+        }
+        
+        .cpu-text {
+          opacity: 0;
+          position: absolute;
+          transform: translateY(-24px);
+          transition: opacity 0.3s ease;
+          left: 32px;
+        }
+        
+        &:hover .cpu-bar {
+          transform: translateY(24px);
+          opacity: 0;
+        }
+        
+        &:hover .cpu-text {
+          opacity: 1;
+          transform: translateY(0px);
+        }
       template: |
-        <div class={{cpu.usage > 85 ? "high-usage" : ""}}>
-          <i class="ti ti-cpu"></i>
-          <span>{{ Math.round(cpu.usage) }}%</span>
-        </div>
+        <i class="ti ti-cpu"></i>
+        <div class="cpu-bar {{ cpu.usage > 85 ? 'high-usage' : '' }}"></div>
+        <span class="cpu-text {{ cpu.usage > 85 ? 'high-usage' : '' }}">{{ Math.round(cpu.usage) }}%</span>
 
     template/battery:
-      providers: ["battery"]
+      providers: [ "battery" ]
       styles: |
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        
         .critical {
           color: var(--battery-low);
           animation: flash 1s infinite;
         }
-
+        
         .low {
           color: var(--battery-low)
         }
-
+        
         .mid {
           color: var(--battery-mid)
         }
-
+        
         .good {
           color: var(--battery-good);
         }
+        
+        .battery-bar {
+          width: 50px;
+          height: 8px;
+          background: color-mix(in srgb, currentColor 20%, transparent);
+          border-radius: 2px;
+          margin-left: 2px;
+          margin-right: 6px;
+          position: relative;
+          transition: all 0.3s ease;
+        }
+        
+        .battery-bar::after {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 0;
+          height: 100%;
+          background: currentColor;
+          border-radius: 2px;
+          width: {{ battery.chargePercent }}%;
+          transition: all 0.3s ease;
+        }
+        
+        .battery-text {
+          opacity: 0;
+          position: absolute;
+          transform: translateY(-24px);
+          transition: opacity 0.3s ease;
+          left: 32px;
+        }
+        
+        &:hover .battery-bar {
+          transform: translateY(24px);
+          opacity: 0;
+        }
+        
+        &:hover .battery-text {
+          opacity: 1;
+          transform: translateY(0px);
+        }
+        
+        overflow: hidden;
       template: |
         <div class="
             @switch (true) {
@@ -206,8 +345,9 @@ window/bar:
             @else if (battery.chargePercent > 70) {<i class="ti ti-battery-3"></i>}
             @else if (battery.chargePercent > 40) {<i class="ti ti-battery-2"></i>}
             @else if (battery.chargePercent > 20) {<i class="ti ti-battery-1"></i>}
-            @else {<i class="ti ti-battery-exclamation">}
-            {{ Math.round(battery.chargePercent) }}%
+            @else {<i class="ti ti-battery-exclamation"></i>}
+            <div class="battery-bar"></div>
+            <span class="battery-text">{{ Math.round(battery.chargePercent) }}%</span>
         </div>
 
   group/center:
@@ -309,7 +449,7 @@ window/bar:
           }
         }
 
-      providers: ["glazewm"]
+      providers: [ "glazewm" ]
       events:
         - type: "click"
           fn_path: "script.js#focusWorkspace"
@@ -347,22 +487,75 @@ window/bar:
       }
 
     template/network:
-      providers: ["network", "util"]
+      providers: [ "network", "util" ]
       styles: |
         margin: 10px;
         i {
           font-size: 20px;
         }
         color: var(--weather);
+        .wifi-dots {
+          display: flex;
+          align-items: flex-end;
+          height: 20px;
+          gap: 2px;
+        }
+        
+        .dot {
+          background-color: currentColor;
+          border-radius: 50%;
+          transition: opacity 0.2s ease-in-out;
+        }
+        
+        .dot:nth-child(1) {
+          width: 4px;
+          height: 4px;
+        }
+        
+        .dot:nth-child(2) {
+          width: 6px;
+          height: 6px;
+        }
+        
+        .dot:nth-child(3) {
+          width: 8px;
+          height: 8px;
+        }
+        
+        .dot:nth-child(4) {
+          width: 10px;
+          height: 10px;
+        }
+        
+        .dot.active {
+          opacity: 1;
+        }
+        
+        .dot.inactive {
+          opacity: 0.5;
+        }
       template: |
         @if (network.defaultInterface?.type === 'ethernet' || network.interfaces.length !== 0 && network.interfaces[0].type == 'ethernet' && network.defaultInterface?.type !== 'wifi') {
               <i class="ti ti-plug"></i>
             } @else if (network.defaultInterface?.type === 'wifi' || network.interfaces.length !== 0 && network.interfaces[0].type == 'wifi') {
-              @if (network.defaultGateway?.signalStrength >= 80) {<i class="ti ti-antenna-bars-5 wifi"></i>}
-              @else if (network.defaultGateway?.signalStrength >= 65) {<i class="ti ti-antenna-bars-4 wifi"></i>}
-              @else if (network.defaultGateway?.signalStrength >= 40) {<i class="ti ti-antenna-bars-3 wifi"></i>}
-              @else if (network.defaultGateway?.signalStrength >= 25) {<i class="ti ti-antenna-bars-2 wifi"></i>}
-              @else {<i class="ti ti-antenna-bars-1 wifi"></i>}
+              <div class="wifi-dots">
+                <span class="dot
+                  @if (network.defaultGateway?.signalStrength >= 25) { active }
+                  @else { inactive }
+                "></span>
+                <span class="dot
+                  @if (network.defaultGateway?.signalStrength >= 40) { active }
+                  @else { inactive }
+                "></span>
+                <span class="dot
+                  @if (network.defaultGateway?.signalStrength >= 65) { active }
+                  @else { inactive }
+                "></span>
+                <span class="dot
+                  @if (network.defaultGateway?.signalStrength >= 80) { active }
+                  @else { inactive }
+                "></span>
+              </div>
               <span class="ssid">
               {{ network.defaultGateway?.ssid }}
               </span>
@@ -376,9 +569,9 @@ window/bar:
         <i class="nf nf-oct-dot_fill"></>
 
     template/clock:
-      providers: ["date"]
+      providers: [ "date" ]
       styles: |
         padding-right: 6px;
       template: |
-        {{ date.toFormat(date.now, 'EEE, d. MMM yyyy, HH:mm:ss') }}
+        {{ date.toFormat(date.now, 'EEE, d. MMM yyyy, t:ss') }}
 
