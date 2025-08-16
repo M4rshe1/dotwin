@@ -1,95 +1,80 @@
-try
-{
+try {
     $request = [System.Net.HttpWebRequest]::Create("https://github.com")
     $request.Timeout = 250
     $response = $request.GetResponse()
     $response.Close()
     $canConnectToGitHub = $true
 }
-catch
-{
+catch {
     $canConnectToGitHub = $false
 }
 
-if (-not (Get-Module -Name PSReadLine -ListAvailable))
-{
+if (-not (Get-Module -Name PSReadLine -ListAvailable)) {
     Write-Host "PSReadLine module not found. Attempting to install via PowerShellGet..."
-    try
-    {
+    try {
         Install-Module -Name PSReadLine -AllowClobber -Force
         Write-Host "PSReadLine installed successfully. Importing..."
         Import-Module PSReadLine
     }
-    catch
-    {
+    catch {
         Write-Error "Failed to install PSReadLine. Error: $_"
     }
 }
-else
-{
+else {
     Import-Module PSReadLine
 }
 
-if (-not (Get-Module -ListAvailable -Name Terminal-Icons))
-{
+if (-not (Get-Module -ListAvailable -Name Terminal-Icons)) {
     Install-Module -Name Terminal-Icons -Scope CurrentUser -Force -SkipPublisherCheck
 }
 
 Import-Module -Name Terminal-Icons
 
-function Update-Profile
-{
-    if (-not $global:canConnectToGitHub)
-    {
+function Update-Profile {
+    if (-not $global:canConnectToGitHub) {
         Write-Host "Skipping profile update check due to GitHub.com not responding within 1 second." -ForegroundColor Yellow
         return
     }
 
-    try
-    {
+    try {
         $url = "https://raw.githubusercontent.com/M4rshe1/pwsh/master/powershell/Microsoft.PowerShell_profile.ps1"
         $oldhash = Get-FileHash $PROFILE
         Invoke-RestMethod $url -OutFile "$env:temp/Microsoft.PowerShell_profile.ps1"
         $newhash = Get-FileHash "$env:temp/Microsoft.PowerShell_profile.ps1"
-        if ($newhash.Hash -ne $oldhash.Hash)
-        {
+        if ($newhash.Hash -ne $oldhash.Hash) {
             Copy-Item -Path "$env:temp/Microsoft.PowerShell_profile.ps1" -Destination $PROFILE -Force
             Write-Host "Profile has been updated. Please restart your shell to reflect changes" -ForegroundColor Magenta
         }
     }
-    catch
-    {
+    catch {
         Write-Error "Unable to check for `$profile updates"
     }
-    finally
-    {
+    finally {
         Remove-Item "$env:temp/Microsoft.PowerShell_profile.ps1" -ErrorAction SilentlyContinue
     }
 }
 Update-Profile
 
 $PSReadLineOptions = @{
-    EditMode = 'Windows'
-    HistoryNoDuplicates = $true
+    EditMode                      = 'Windows'
+    HistoryNoDuplicates           = $true
     HistorySearchCursorMovesToEnd = $true
-    PredictionSource = 'History'
-    PredictionViewStyle = 'ListView'
-    BellStyle = 'None'
+    PredictionSource              = 'History'
+    PredictionViewStyle           = 'ListView'
+    BellStyle                     = 'None'
 }
 Set-PSReadLineOption @PSReadLineOptions
 Set-PSReadLineOption -PredictionSource HistoryAndPlugin
 Set-PSReadLineOption -MaximumHistoryCount 10000
 
-function e
-{
+function e {
     param(
         [string]$path = "."
     )
     explorer $path
 }
 
-function ctt
-{
+function ctt {
     Invoke-RestMethod christitus.com/win | Invoke-Expression
 }
 
@@ -156,18 +141,15 @@ function Add-SshKey {
 }
 
 
-function Get-PubIP
-{
+function Get-PubIP {
     (Invoke-WebRequest http://ifconfig.me/ip).Content
 }
 
-function sha256
-{
+function sha256 {
     param(
         [string]$path = ""
     )
-    if (-not (Test-Path $path))
-    {
+    if (-not (Test-Path $path)) {
         Write-Host "File not found" -ForegroundColor Red
         return
     }
@@ -190,7 +172,8 @@ function grep {
             $line = $_
             $lineMatches = if ($caseSensitive) {
                 [regex]::Matches($line, $regex)
-            } else {
+            }
+            else {
                 [regex]::Matches($line, $regex, [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
             }
 
@@ -210,8 +193,7 @@ function grep {
 }
 
 
-function unzip()
-{
+function unzip() {
     param (
         [string] $file = $( throw "Please provide a file to unzip" ),
         [string] $dest = "."
@@ -220,8 +202,7 @@ function unzip()
     Expand-Archive -Path $file -DestinationPath $dest
 }
 
-function zip()
-{
+function zip() {
     param (
         [string] $file = $( throw "Please provide a file to zip" ),
         [string] $dest = "."
@@ -230,79 +211,65 @@ function zip()
     Compress-Archive -Path $file -DestinationPath $dest
 }
 
-function sed($file, $find, $replace)
-{
+function sed($file, $find, $replace) {
     (Get-Content $file).replace("$find", $replace) | Set-Content $file
 }
 
-function which($name)
-{
+function which($name) {
     Get-Command $name | Select-Object -ExpandProperty Definition
 }
 
-function pkill($name)
-{
+function pkill($name) {
     Get-Process $name -ErrorAction SilentlyContinue | Stop-Process
 }
 
-function pgrep($name)
-{
+function pgrep($name) {
     Get-Process | Where-Object { $_.ProcessName -match $name }
 }
 
-function head
-{
+function head {
     param($Path, $n = 10)
     Get-Content $Path -Head $n
 }
 
-function tail
-{
+function tail {
     param($Path, $n = 10)
     Get-Content $Path -Tail $n
 }
 
-function la
-{
+function la {
     Get-ChildItem -Path . -Force | Format-Table -AutoSize
 }
-function ll
-{
+function ll {
     Get-ChildItem -Path . -Force -Hidden | Format-Table -AutoSize
 }
 
-function mkcd($name)
-{
+function mkcd($name) {
     mkdir $name
     Set-Location $name
 }
 
-function rmrf($path)
-{
+function rmrf($path) {
     $confirm = Read-Host "Are you sure you want to delete $path? (y/n)"
-    if ($confirm -eq "y")
-    {
+    if ($confirm -eq "y") {
         Remove-Item $path -Recurse -Force
     }
 }
 
-function Kill-Port($port)
-{
+function Kill-Port($port) {
     $process = Get-Process -Id (Get-NetTCPConnection -LocalPort $port).OwningProcess -ErrorAction SilentlyContinue
     $process
-    if ($null -ne $process)
-    {
+    if ($null -ne $process) {
         $process | Stop-Process -Force
     }
-    else
-    {
+    else {
         Write-Host "No process found on port $port" -ForegroundColor Yellow
     }
 }
 
 function ff {
     param(
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [string]$name,
 
         [switch]$CaseSensitive
@@ -331,8 +298,7 @@ function ff {
     }
 }
 
-function fif
-{
+function fif {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory = $true)]
@@ -342,22 +308,18 @@ function fif
     )
     $files = Get-ChildItem -Path $path -Recurse -File
     $results = @()
-    foreach ($file in $files)
-    {
-        try
-        {
+    foreach ($file in $files) {
+        try {
             $content = Get-Content -Path $file.FullName -Raw -ErrorAction Stop
             $lines = $content -split "`r`n"
             for ($i = 0; $i -lt $lines.Count; $i++) {
-                if ($lines[$i] -match $SearchString)
-                {
+                if ($lines[$i] -match $SearchString) {
                     $result = "{0}:{1}" -f $file.FullName, ($i + 1)
                     $results += $result
                 }
             }
         }
-        catch
-        {
+        catch {
             Write-Warning "Error reading file: $( $file.FullName )"
         }
     }
@@ -368,7 +330,8 @@ function admin {
     if ($args.Count -gt 0) {
         $argList = $args -join ' '
         Start-Process wt -Verb runAs -ArgumentList "pwsh.exe -NoExit -Command $argList"
-    } else {
+    }
+    else {
         Start-Process wt -Verb runAs
     }
 }
@@ -413,8 +376,7 @@ function gra { git remote add "$args" }
 
 function gco { git checkout "$args" }
 
-function cpy
-{
+function cpy {
     param (
         [Parameter(ValueFromPipeline = $true, Mandatory = $true)]
         [string] $content
@@ -422,13 +384,11 @@ function cpy
     Set-Clipboard -Value $content
 }
 
-function pst
-{
+function pst {
     Get-Clipboard
 }
 
-function unique
-{
+function unique {
     param (
         [Parameter(ValueFromPipeline = $true)]
         [string]$InputString
@@ -438,39 +398,52 @@ function unique
     }
     process {
         $trimmedLine = $InputString.Trim()
-        if (-not $uniqueLines.ContainsKey($trimmedLine))
-        {
+        if (-not $uniqueLines.ContainsKey($trimmedLine)) {
             $uniqueLines[$trimmedLine] = $true
             $trimmedLine
         }
     }
 }
 
-if (Get-Command zoxide -ErrorAction SilentlyContinue)
-{
-    Invoke-Expression (& { (zoxide init powershell | Out-String) })
-}
-else
-{
-    Write-Host "zoxide command not found. Attempting to install via winget..."
-    try
-    {
-        winget install -e --id ajeetdsouza.zoxide
-        Write-Host "zoxide installed successfully. Initializing..."
-        Invoke-Expression (& { (zoxide init powershell | Out-String) })
+$software = @(
+    @{
+        command = "zoxide"
+        package = "ajeetdsouza.zoxide"
+    },
+    @{
+        command = "rg"
+        package = "BurntSushi.ripgrep.GNU"
+    },
+    @{
+        command = "oh-my-posh"
+        package = "JanDeDobbeleer.OhMyPosh"
+        init    = "oh-my-posh init pwsh --config `"$env:USERPROFILE/theme.omp.json`" | Invoke-Expression"
     }
-    catch
-    {
-        Write-Error "Failed to install zoxide. Error: $_"
+)
+
+foreach ($software in $software) {
+    if (Get-Command $software.command -ErrorAction SilentlyContinue) {
+        # if ($software.init) {
+        #     Invoke-Expression $software.init
+        # }
+    }
+    else {
+        Write-Host "$($software.command) command not found. Attempting to install via winget..."
+        try {
+            winget install -e --id $software.package
+            Write-Host "$($software.command) installed successfully. Initializing..."
+        }
+        catch {
+            Write-Error "Failed to install $($software.command). Error: $_"
+        }
     }
 }
 
-function Update-Config($isInit)
-{
+
+function Update-Config($isInit) {
     $config = Invoke-RestMethod "https://raw.githubusercontent.com/M4rshe1/pwsh/master/config.json"
     $config.config_files | ForEach-Object {
-        if ($_.init_only -and -not $isInit)
-        {
+        if ($_.init_only -and -not $isInit) {
             Write-Host "Ignoring $( $_.name )..." -ForegroundColor Yellow
             return
         }
@@ -479,40 +452,21 @@ function Update-Config($isInit)
     }
 }
 
-if ($global:canConnectToGitHub)
-{
-    try
-    {
+if ($global:canConnectToGitHub) {
+    try {
         $url = "https://raw.githubusercontent.com/M4rshe1/dotwin/master/ohmyposh/theme.omp.json"
         $oldhash = Get-FileHash "$env:USERPROFILE/theme.omp.json"
         Invoke-RestMethod $url -OutFile "$env:temp/theme.omp.json"
         $newhash = Get-FileHash "$env:temp/theme.omp.json"
         Copy-Item -Path "$env:temp/theme.omp.json" -Destination "$env:USERPROFILE/theme.omp.json" -Force
+        oh-my-posh init pwsh --config "$env:USERPROFILE/theme.omp.json" | Invoke-Expression
     }
-    catch
-    {
+    catch {
         Write-Error "Unable to check for oh-my-posh theme updates"
     }
 }
 
+Invoke-Expression (& { (zoxide init powershell | Out-String) })
 
-if (Get-Command oh-my-posh -ErrorAction SilentlyContinue)
-{
-
-    oh-my-posh init pwsh --config "$env:USERPROFILE/theme.omp.json" | Invoke-Expression
-}
-else
-{
-    Write-Host "oh-my-posh command not found. Attempting to install via winget..."
-    try
-    {
-        winget install JanDeDobbeleer.OhMyPosh -s winget
-        Write-Host "oh-my-posh installed successfully. Initializing..."
-        oh-my-posh init pwsh --config "$env:USERPROFILE/theme.omp.json" | Invoke-Expression
-    }
-    catch
-    {
-        Write-Error "Failed to install oh-my-posh. Error: $_"
-    }
-}
-
+Remove-Alias -Name cd
+Set-Alias -Name cd -Value z

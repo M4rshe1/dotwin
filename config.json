@@ -48,11 +48,8 @@
     "Insecure.Nmap",
     "VideoLAN.VLC",
     "PuTTY.PuTTY",
-    "Microsoft.WindowsTerminal",
-    "Alex313031.Thorium.AVX2",
     "Nilesoft.Shell",
     "Parsec.Parsec",
-    "Microsoft.VisualStudioCode",
     "JetBrains.PyCharm.Professional",
     "JetBrains.WebStorm",
     "JGraph.Draw",
@@ -61,7 +58,9 @@
     "glzr-io.glazewm",
     "glzr-io.zebar",
     "anysphere.cursor",
-    "Mozilla.Firefox"
+    "Mozilla.Firefox",
+    "JanDeDobbeleer.OhMyPosh",
+    "BurntSushi.ripgrep.GNU"
   ],
   "registry": [
     [

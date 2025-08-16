@@ -75,10 +75,10 @@ Function Show-MenuSelect() {
     }
 }
 
-Invoke-RestMethod "https://raw.githubusercontent.com/M4rshe1/dotwin/master/config.json" | Out-File $env:TMP\settings.json
+Invoke-RestMethod "https://raw.githubusercontent.com/M4rshe1/dotwin/master/config.json" -OutFile $env:TMP\settings.json
 $Global:settings = Get-Content $env:TMP\settings.json | ConvertFrom-Json
 
-function install-Softwares {
+function Install-Softwares {
     Write-Host "Installing software..."
     $Global:settings.software | ForEach-Object {
         winget install $_ -y
@@ -141,6 +141,11 @@ function Install-Fonts {
     Remove-Item -Path $env:TMP\JetBrainsMono -Recurse -Force
     Remove-Item -Path $env:TMP\JetBrainsMono.zip -Force
 }
+
+Install-Fonts
+Add-StartUpShortcuts
+Set-Settings
+Install-Softwares
 
 Write-Host "Setup complete!"
 
