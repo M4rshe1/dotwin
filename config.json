@@ -14,20 +14,8 @@
     },
     {
       "name": "GlazeWM",
-      "url": "https://raw.githubusercontent.com/M4rshe1/dotwin/master/glazewm/legacy/config.yaml",
-      "local": "\"$env:USERPROFILE\\.glaze-wm\\config.yaml\"",
-      "init_only": false
-    },
-    {
-      "name": "GlazeWM Rust",
       "url": "https://raw.githubusercontent.com/M4rshe1/dotwin/master/glazewm/rust/config.yaml",
       "local": "\"$env:USERPROFILE\\.glzr\\glazewm\\config.yaml\"",
-      "init_only": false
-    },
-    {
-      "name": "ZeBar",
-      "url": "https://raw.githubusercontent.com/M4rshe1/dotwin/master/zebar/config.yaml",
-      "local": "\"$env:USERPROFILE\\.glzr\\zebar\\config.yaml\"",
       "init_only": false
     },
     {
@@ -55,7 +43,6 @@
     "Microsoft.PowerShell",
     "OpenJS.NodeJS.LTS",
     "ajeetdsouza.zoxide",
-    "Adobe.Acrobat.Reader.64-bit",
     "Audacity.Audacity",
     "Microsoft.PowerToys",
     "Insecure.Nmap",
@@ -72,6 +59,8 @@
     "Spotify.Spotify",
     "JohnMarcFerlane.Pandoc",
     "glzr-io.glazewm",
+    "glzr-io.zebar",
+    "anysphere.cursor",
     "Mozilla.Firefox"
   ],
   "registry": [

@@ -1,5 +1,12 @@
-Function Show-MenuSelect()
-{
+
+$isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")
+
+if (-not $isAdmin) {
+    Read-Host "Please run this script as an administrator."
+    exit
+}
+
+Function Show-MenuSelect() {
 
     Param(
         [Parameter(Mandatory = $True)][String]$MenuTitle,
@@ -13,22 +20,18 @@ Function Show-MenuSelect()
 
     Clear-Host
 
-    While ($EnterPressed -eq $False)
-    {
-        if ($MenuBanner.Length -ne 1)
-        {
+    While ($EnterPressed -eq $False) {
+        if ($MenuBanner.Length -ne 1) {
             Write-Host "$MenuBanner"
         }
         Write-Host "$MenuTitle"
 
         For ($i = 0; $i -le $MaxValue; $i++) {
 
-            If ($i -eq $Selection)
-            {
+            If ($i -eq $Selection) {
                 Write-Host -BackgroundColor DarkGray -ForegroundColor White "[ $( $MenuOptions[$i] ) ]"
             }
-            Else
-            {
+            Else {
                 Write-Host "  $( $MenuOptions[$i] )  "
             }
 
@@ -36,8 +39,7 @@ Function Show-MenuSelect()
 
         $KeyInput = $host.ui.rawui.readkey("NoEcho,IncludeKeyDown").virtualkeycode
 
-        Switch ($KeyInput)
-        {
+        Switch ($KeyInput) {
             13 {
                 $EnterPressed = $True
                 Return $Selection
@@ -46,12 +48,10 @@ Function Show-MenuSelect()
             }
 
             38 {
-                If ($Selection -eq 0)
-                {
+                If ($Selection -eq 0) {
                     $Selection = $MaxValue
                 }
-                Else
-                {
+                Else {
                     $Selection -= 1
                 }
                 Clear-Host
@@ -59,12 +59,10 @@ Function Show-MenuSelect()
             }
 
             40 {
-                If ($Selection -eq $MaxValue)
-                {
+                If ($Selection -eq $MaxValue) {
                     $Selection = 0
                 }
-                Else
-                {
+                Else {
                     $Selection += 1
                 }
                 Clear-Host
@@ -79,33 +77,22 @@ Function Show-MenuSelect()
 
 Invoke-RestMethod "https://raw.githubusercontent.com/M4rshe1/dotwin/master/config.json" | Out-File $env:TMP\settings.json
 $Global:settings = Get-Content $env:TMP\settings.json | ConvertFrom-Json
-$isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")
 
-if (-not $isAdmin)
-{
-    Read-Host "Please run this script as an administrator."
-    exit
-}
-
-function install-Softwares
-{
+function install-Softwares {
     Write-Host "Installing software..."
     $Global:settings.software | ForEach-Object {
         winget install $_ -y
     }
 }
 
-function Set-Settings
-{
+function Set-Settings {
     Write-Host "Add config files..."
-    if (-not (Test-Path $PROFILE))
-    {
+    if (-not (Test-Path $PROFILE)) {
         New-Item -ItemType File -Path $PROFILE -Force
     }
     $Global:settings.config_files | ForEach-Object {
         $file = $_
-        if ($file.init_only)
-        {
+        if ($file.init_only) {
             Write-Host "Ignoring $($file.name)..." -ForegroundColor Yellow
             return
         }
@@ -116,36 +103,31 @@ function Set-Settings
 
 
 
-function Add-StartUpShortcut($name, $pathm, $admin)
-{
+function Add-StartUpShortcut($name, $pathm, $admin) {
     $shortcut = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup\$name.lnk"
     $shell = New-Object -ComObject WScript.Shell
     $shortcut = $shell.CreateShortcut($shortcut)
     $shortcut.TargetPath = $path
 
-    if ($admin)
-    {
+    if ($admin) {
         $shortcut.Arguments = "-ExecutionPolicy Bypass -File $path"
     }
     $shortcut.Save()
 }
 
-function Get-WinGetProgramPath($name)
-{
+function Get-WinGetProgramPath($name) {
     $path = $env:LOCALAPPDATA + "\Microsoft\WinGet\Packages\"
     Get-ChildItem -Path $path -recurse -filter "*$name*" -ErrorAction SilentlyContinue | ForEach-Object {
         return "$( $_.directory )\$( $_ )"
     }
 }
 
-function Add-StartUpShortcuts
-{
+function Add-StartUpShortcuts {
     Write-Host "Adding startup shortcuts..."
     Add-StartUpShortcut "glazewm" (Get-WinGetProgramPath "glazewm.exe")
 }
 
-function Install-Fonts
-{
+function Install-Fonts {
     Write-Host "Installing fonts..."
 
     Invoke-WebRequest "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/JetBrainsMono.zip" -OutFile $env:TMP\JetBrainsMono.zip
