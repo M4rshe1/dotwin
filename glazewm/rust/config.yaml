@@ -2,7 +2,9 @@ light_purple: &light_purple "#828dd1"
 
 
 general:
-  startup_commands: [ 'shell-exec %userprofile%/.glzr/zebar/start.bat' ]
+  startup_commands: ['shell-exec zebar']
+
+  shutdown_commands: ['shell-exec taskkill /IM zebar.exe /F']
 
   focus_follows_cursor: False
 
