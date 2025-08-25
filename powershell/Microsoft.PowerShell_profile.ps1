@@ -199,7 +199,7 @@ function unzip() {
         [string] $dest = "."
     )
 
-    Expand-Archive -Path $file -DestinationPath $dest
+    Expand-Archive -Path $file -DestinationPath $dest -Force
 }
 
 function zip() {
@@ -208,7 +208,7 @@ function zip() {
         [string] $dest = "."
     )
 
-    Compress-Archive -Path $file -DestinationPath $dest
+    Compress-Archive -Path $file -DestinationPath $dest -Force
 }
 
 function sed($file, $find, $replace) {
