@@ -81,6 +81,8 @@ window_rules:
 
       # Ignore rules for various 3rd-party apps.
       - window_process: { equals: 'PowerToys.PowerAccent' }
+      - window_process: { equals: 'PowerToys.AdvancedPast' }
+      - window_process: { equals: 'Greenshot' }
       - window_process: { equals: 'Lively' }
         window_class: { regex: 'HwndWrapper*' }
 #  - command: "resize borders 0px -7px -7px -7px"

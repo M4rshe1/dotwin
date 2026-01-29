@@ -342,13 +342,13 @@ function gs { git status }
 
 function ga { git add . }
 
-function gc { git commit -m "$args" }
+function gm { git commit -m "$args" }
 
-function gp { git push }
+function gu { git push }
 
 function gcl { git clone "$args" }
 
-function gcm {
+function gam {
     git add .
     git commit -m "$args"
 }
