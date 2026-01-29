@@ -120,13 +120,13 @@ keybindings:
     bindings: [ "alt+k" ]
 
   - commands: [ 'move --direction left' ]
-    bindings: [ 'alt+shift+h', 'ctrl+shift+left' ]
+    bindings: [ 'alt+shift+h', 'ctrl+shift+alt+left' ]
   - commands: [ 'move --direction right' ]
-    bindings: [ 'alt+shift+l', 'ctrl+shift+right' ]
+    bindings: [ 'alt+shift+l', 'ctrl+shift+alt+right' ]
   - commands: [ 'move --direction up' ]
-    bindings: [ 'alt+shift+k', 'ctrl+shift+up' ]
+    bindings: [ 'alt+shift+k', 'ctrl+shift+alt+up' ]
   - commands: [ 'move --direction down' ]
-    bindings: [ 'alt+shift+j', 'ctrl+shift+down' ]
+    bindings: [ 'alt+shift+j', 'ctrl+shift+alt+down' ]
 
   - commands: [ 'resize --width -2%' ]
     bindings: [ 'alt+left' ]
