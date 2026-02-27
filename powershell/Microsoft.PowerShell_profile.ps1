@@ -459,11 +459,16 @@ if ($global:canConnectToGitHub) {
         Invoke-RestMethod $url -OutFile "$env:temp/theme.omp.json"
         $newhash = Get-FileHash "$env:temp/theme.omp.json"
         Copy-Item -Path "$env:temp/theme.omp.json" -Destination "$env:USERPROFILE/theme.omp.json" -Force
-        oh-my-posh init pwsh --config "$env:USERPROFILE/theme.omp.json" | Invoke-Expression
     }
     catch {
         Write-Error "Unable to check for oh-my-posh theme updates"
     }
+}
+
+if (Test-Path "$env:USERPROFILE/theme.omp.json") {
+    oh-my-posh init pwsh --config "$env:USERPROFILE/theme.omp.json" | Invoke-Expression
+} else {
+    Write-Error "No Oh My Posh Theme saved locally"
 }
 
 Invoke-Expression (& { (zoxide init powershell | Out-String) })
