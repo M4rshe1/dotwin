@@ -439,6 +439,135 @@ foreach ($software in $software) {
     }
 }
 
+function paru {
+    param(
+        [Parameter(Mandatory = $false, Position = 0)]
+        [string]$SearchTerm = "",
+
+        [Alias("R")]
+        [switch]$Remove,
+
+        [Alias("Q")]
+        [switch]$Query
+    )
+
+    # 1. Update mode (paru with no args)
+    if ([string]::IsNullOrWhiteSpace($SearchTerm) -and -not $Remove -and -not $Query) {
+        Write-Host "Updating all packages..." -ForegroundColor Cyan
+        winget upgrade --all
+        return
+    }
+
+    # 2. Determine mode and command
+    $wingetCmd = "search"
+    $modeText = "Searching for"
+    
+    if ($Remove) { 
+        $wingetCmd = "list"
+        $modeText = "Searching local packages to REMOVE" 
+    } elseif ($Query) {
+        $wingetCmd = "list"
+        $modeText = "Listing installed packages matching"
+    }
+    
+    Write-Host "$modeText '$SearchTerm'..." -ForegroundColor Cyan
+    
+    # Capture winget output
+    $output = invoke-expression "winget $wingetCmd $SearchTerm"
+    $lines = $output -split "`n" | Where-Object { $_ -match '\S' }
+    
+    # Find header
+    $headerLine = $lines | Where-Object { $_ -match '^Name' } | Select-Object -First 1
+    
+    if (-not $headerLine) {
+        Write-Host "No packages found." -ForegroundColor Red
+        return
+    }
+
+    $separatorIndex = [array]::IndexOf($lines, $headerLine) + 1
+    $dataStart = $separatorIndex + 1
+
+    # Get column positions
+    $namePos = $headerLine.IndexOf("Name")
+    $idPos = $headerLine.IndexOf("Id")
+    $versionPos = $headerLine.IndexOf("Version")
+    $matchPos = $headerLine.IndexOf("Match")
+    $sourcePos = $headerLine.IndexOf("Source")
+
+    $packages = @()
+    for ($i = $dataStart; $i -lt $lines.Count; $i++) {
+        $line = $lines[$i]
+        if ($line.Length -lt $idPos) { continue }
+
+        $name = $line.Substring($namePos, $idPos - $namePos).Trim()
+        $id = $line.Substring($idPos, $versionPos - $idPos).Trim()
+        
+        # Adjusting limits for 'list' vs 'search'
+        $vLimit = if ($matchPos -gt $versionPos) { $matchPos } elseif ($sourcePos -gt $versionPos) { $sourcePos } else { $line.Length }
+        $version = $line.Substring($versionPos, $vLimit - $versionPos).Trim()
+        
+        $match = ""
+        if ($matchPos -gt 0 -and $sourcePos -gt $matchPos -and $line.Length -gt $matchPos) {
+            $match = $line.Substring($matchPos, $sourcePos - $matchPos).Trim()
+        }
+
+        $packages += [PSCustomObject]@{
+            Name    = $name
+            Id      = $id
+            Version = $version
+            Match   = $match
+        }
+    }
+
+    # Sort: Best matches at the bottom [1]
+    $sorted = $packages | Sort-Object @{Expression = {$_.Match -eq ""}; Descending = $false}
+
+    # Display loop
+    for ($i = 0; $i -lt $sorted.Count; $i++) {
+        $displayNum = $sorted.Count - $i
+        $pkg = $sorted[$i]
+
+        Write-Host "[$displayNum] " -NoNewline -ForegroundColor DarkGray
+        Write-Host $pkg.Name -NoNewline -ForegroundColor Green
+        Write-Host " - " -NoNewline -ForegroundColor DarkGray
+        Write-Host $pkg.Id -NoNewline -ForegroundColor Cyan
+        Write-Host " v$($pkg.Version)" -NoNewline -ForegroundColor Yellow
+        if ($pkg.Match) {
+            Write-Host " ($($pkg.Match))" -ForegroundColor DarkMagenta
+        } else {
+            Write-Host ""
+        }
+    }
+
+    # If it was just a Query (-Q), exit here without prompting
+    if ($Query) { return }
+
+    Write-Host ""
+    $actionPrompt = if ($Remove) { "REMOVE" } else { "install" }
+    $selection = Read-Host "Select package number to $actionPrompt (or 'q' to quit)"
+
+    if ($selection -eq 'q' -or [string]::IsNullOrWhiteSpace($selection)) { return }
+
+    $val = 0
+    if ([int]::TryParse($selection, [ref]$val)) {
+        $selectedIndex = $sorted.Count - $val
+        
+        if ($selectedIndex -ge 0 -and $selectedIndex -lt $sorted.Count) {
+            $pkg = $sorted[$selectedIndex]
+            if ($Remove) {
+                Write-Host "`nUninstalling " -NoNewline -ForegroundColor Red
+                Write-Host "$($pkg.Name)..." -ForegroundColor White
+                winget uninstall --id $pkg.Id
+            } else {
+                Write-Host "`nInstalling " -NoNewline -ForegroundColor Green
+                Write-Host "$($pkg.Name)..." -ForegroundColor White
+                winget install --id $pkg.Id
+            }
+        } else {
+            Write-Host "Invalid selection index." -ForegroundColor Red
+        }
+    }
+}
 
 function Update-Config($isInit) {
     $config = Invoke-RestMethod "https://raw.githubusercontent.com/M4rshe1/pwsh/master/config.json"
