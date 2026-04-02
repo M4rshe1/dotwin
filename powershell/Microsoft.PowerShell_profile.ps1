@@ -521,17 +521,21 @@ function paru {
 
     # Sort: Best matches at the bottom [1]
     $sorted = $packages | Sort-Object @{Expression = {$_.Match -eq ""}; Descending = $false}
+    
+    $numberOffset = $sorted.Count.ToString().Length
 
     # Display loop
     for ($i = 0; $i -lt $sorted.Count; $i++) {
         $displayNum = $sorted.Count - $i
         $pkg = $sorted[$i]
 
+        Write-Host $(" " * ($numberOffset - $displayNum.ToString().Length)) -NoNewline -ForegroundColor DarkGray
         Write-Host "[$displayNum] " -NoNewline -ForegroundColor DarkGray
         Write-Host $pkg.Name -NoNewline -ForegroundColor Green
         Write-Host " - " -NoNewline -ForegroundColor DarkGray
+        Write-Host "[$($pkg.Version)]" -ForegroundColor Yellow
+        Write-Host $(" " * ($numberOffset + 3)) -NoNewline -ForegroundColor DarkGray
         Write-Host $pkg.Id -NoNewline -ForegroundColor Cyan
-        Write-Host " v$($pkg.Version)" -NoNewline -ForegroundColor Yellow
         if ($pkg.Match) {
             Write-Host " ($($pkg.Match))" -ForegroundColor DarkMagenta
         } else {
