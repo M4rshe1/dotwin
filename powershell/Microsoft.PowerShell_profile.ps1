@@ -354,7 +354,7 @@ function gam {
 }
 
 function grc {
-    git rm --cached "$args"
+    git rm --cached -r "$args"
 }
 
 function lg {
