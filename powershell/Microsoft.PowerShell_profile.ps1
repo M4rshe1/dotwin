@@ -465,7 +465,8 @@ function paru {
     if ($Remove) { 
         $wingetCmd = "list"
         $modeText = "Searching local packages to REMOVE" 
-    } elseif ($Query) {
+    }
+    elseif ($Query) {
         $wingetCmd = "list"
         $modeText = "Listing installed packages matching"
     }
@@ -520,7 +521,7 @@ function paru {
     }
 
     # Sort: Best matches at the bottom [1]
-    $sorted = $packages | Sort-Object @{Expression = {$_.Match -eq ""}; Descending = $false}
+    $sorted = $packages | Sort-Object @{Expression = { $_.Match -eq "" }; Descending = $false }
     
     $numberOffset = $sorted.Count.ToString().Length
 
@@ -538,7 +539,8 @@ function paru {
         Write-Host $pkg.Id -NoNewline -ForegroundColor Cyan
         if ($pkg.Match) {
             Write-Host " ($($pkg.Match))" -ForegroundColor DarkMagenta
-        } else {
+        }
+        else {
             Write-Host ""
         }
     }
@@ -552,23 +554,27 @@ function paru {
 
     if ($selection -eq 'q' -or [string]::IsNullOrWhiteSpace($selection)) { return }
 
-    $val = 0
-    if ([int]::TryParse($selection, [ref]$val)) {
-        $selectedIndex = $sorted.Count - $val
-        
-        if ($selectedIndex -ge 0 -and $selectedIndex -lt $sorted.Count) {
-            $pkg = $sorted[$selectedIndex]
-            if ($Remove) {
-                Write-Host "`nUninstalling " -NoNewline -ForegroundColor Red
-                Write-Host "$($pkg.Name)..." -ForegroundColor White
-                winget uninstall --id $pkg.Id
-            } else {
-                Write-Host "`nInstalling " -NoNewline -ForegroundColor Green
-                Write-Host "$($pkg.Name)..." -ForegroundColor White
-                winget install --id $pkg.Id
+    $selection.split(',') | ForEach-Object { 
+        $val = 0
+        if ([int]::TryParse($_, [ref]$val)) {
+            $selectedIndex = $sorted.Count - $val
+            
+            if ($selectedIndex -ge 0 -and $selectedIndex -lt $sorted.Count) {
+                $pkg = $sorted[$selectedIndex]
+                if ($Remove) {
+                    Write-Host "`nUninstalling " -NoNewline -ForegroundColor Red
+                    Write-Host "$($pkg.Name)..." -ForegroundColor White
+                    winget uninstall --id $pkg.Id
+                }
+                else {
+                    Write-Host "`nInstalling " -NoNewline -ForegroundColor Green
+                    Write-Host "$($pkg.Name)..." -ForegroundColor White
+                    winget install --id $pkg.Id
+                }
             }
-        } else {
-            Write-Host "Invalid selection index." -ForegroundColor Red
+            else {
+                Write-Host "Invalid selection index." -ForegroundColor Red
+            }
         }
     }
 }
@@ -600,7 +606,8 @@ if ($global:canConnectToGitHub) {
 
 if (Test-Path "$env:USERPROFILE/theme.omp.json") {
     oh-my-posh init pwsh --config "$env:USERPROFILE/theme.omp.json" | Invoke-Expression
-} else {
+}
+else {
     Write-Error "No Oh My Posh Theme saved locally"
 }
 
